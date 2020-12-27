@@ -114,6 +114,16 @@ desiredAccTime, muTire, wheelRadius):
 
     return torques, velocities, power
 
+def plot_png(xs, ys):
+    setdpi=600
+    plt.plot(xs, ys, label=f'{power/1e3:.0f} kW')
+    plt.xlabel('Velocity [m/s]')
+    plt.ylabel('Torque [Nm]')
+    plt.legend(loc='best')
+    plt.ylim(bottom=0)
+    plt.savefig('static/images/torque.png', dpi=setdpi)
+    return 'plotting done, see disk'
+
 
 if __name__ == "__main__":
     mass = 1500
@@ -132,16 +142,11 @@ if __name__ == "__main__":
 
     #an example string: 0.3, 2, 1300, 0, 0, 33, 0.5, 0.4, 2.5, 6, 0.95, 0.3
 
-    torques, velocities, power = accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel, \
-    desiredAccTime, muTire, wheelRadius)
+    torques, velocities, power = accelerateVehicle(Cd, frontArea, mass, grade, v0,\
+         v1, cgh, wtRearFrac, wheelbase, driveWheel, \
+         desiredAccTime, muTire, wheelRadius)
 
-    setdpi=600
-
-    plt.plot(velocities, torques, label=f'{power/1e3:.0f} kW')
-    plt.xlabel('Velocity [m/s]')
-    plt.ylabel('Torque [Nm]')
-    plt.legend(loc='best')
-    plt.ylim(bottom=0)
-    plt.savefig('images/torque.png', dpi=setdpi)
+    message = plot_png(velocities, torques)
+    print(message)
 
     print(f'Power is {power*1e-3} kW')
