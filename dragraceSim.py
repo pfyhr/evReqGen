@@ -2,6 +2,7 @@
 import sympy as sym
 from sympy.solvers.solveset import linsolve
 import numpy as np
+import matplotlib.pyplot as plt
 
 def topGradeSpeed(Cd, Cr, g, rhoAir, frontArea, mass, grade, velocity, wheelRadius):
     Froll = Cr * mass * g
@@ -77,8 +78,8 @@ desiredAccTime, muTire, wheelRadius):
             power = power * (1+np.sqrt(5))/2
         else:
             power = power * 0.75
-
-        print('power=',power*1e-3) 
+        ### print intermediate outputs by uncommenting below
+        #print('power=',power*1e-3) 
         velocities  = []
         torques     = []
 
@@ -128,5 +129,14 @@ if __name__ == "__main__":
 
     torques, velocities, power = accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel, \
     desiredAccTime, muTire, wheelRadius)
+
+    setdpi=600
+
+    plt.plot(velocities, torques, label=f'{power/1e3:.0f} kW')
+    plt.xlabel('Velocity [m/s]')
+    plt.ylabel('Torque [Nm]')
+    plt.legend(loc='best')
+    plt.ylim(bottom=0)
+    plt.savefig('images/torque.png', dpi=setdpi)
 
     print(f'Power is {power*1e-3} kW')
