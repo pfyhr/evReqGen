@@ -52,7 +52,7 @@ desiredAccTime, muTire, wheelRadius):
     Cr          = 0.01
     transLoss   = 0.99**3
     timeTol  = 0.1
-    
+
     #limit v1 max to
     vmax = 151.0/3.6
     if v1 > vmax:
@@ -67,8 +67,8 @@ desiredAccTime, muTire, wheelRadius):
 
     #start search for optimal wheeltorque curve given constraints.
     #initialize power and time with some high values
-    power       = 10e3
-    simAccTime  = 1e6
+    power       = 10.0e3
+    simAccTime  = 1.0e6
 
     while abs(simAccTime - desiredAccTime) > timeTol:
         #initialize temporary variables
