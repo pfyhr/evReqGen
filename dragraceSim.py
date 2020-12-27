@@ -122,7 +122,7 @@ if __name__ == "__main__":
     wtRearFrac = 0.56
     wheelbase = 2.5
     driveWheel = 'RWD'
-    desiredAccTime = 9
+    desiredAccTime = 6
     muTire = 0.9
     wheelRadius = 0.3
 
