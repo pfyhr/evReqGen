@@ -42,12 +42,16 @@ def tractionMax(mass, g, wtRearFrac, wheelbase, cgh, driveWheel, muTire):
 
 def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel, \
 desiredAccTime, muTire, wheelRadius):
-    
+    #debug output
+    print(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, \
+        wheelbase, driveWheel, \
+        desiredAccTime, muTire, wheelRadius) 
     #some constantas
     rhoAir      = 1.2
     g           = 9.81
     Cr          = 0.01
     transLoss   = 0.99**3
+    timeTol  = 0.1
     
     #limit v1 max to
     vmax = 151.0/3.6
@@ -66,13 +70,12 @@ desiredAccTime, muTire, wheelRadius):
     power       = 10e3
     simAccTime  = 1e6
 
-    while abs(simAccTime - desiredAccTime) > 0.01:
+    while abs(simAccTime - desiredAccTime) > timeTol:
         #initialize temporary variables
         iterStep = 1
         timeStep = 0.01
         vCur     = v0
         pCar     = 0 #momentum?
-        timeTol  = 0.1
 
         if simAccTime > desiredAccTime+timeTol:
             power = power * (1+np.sqrt(5))/2
@@ -126,6 +129,8 @@ if __name__ == "__main__":
     desiredAccTime = 6
     muTire = 0.9
     wheelRadius = 0.3
+
+    #an example string: 0.3, 2, 1300, 0, 0, 33, 0.5, 0.4, 2.5, 6, 0.95, 0.3
 
     torques, velocities, power = accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel, \
     desiredAccTime, muTire, wheelRadius)

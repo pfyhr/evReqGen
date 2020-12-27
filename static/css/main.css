@@ -1,4 +1,9 @@
 body {
-    margin: 10;
+    margin-left: 10;
     font-family: 'Times New Roman', Times, serif;
+}
+
+h1 {
+    margin-top: 20px;
+    padding: 25px;
 }
