@@ -33,8 +33,8 @@ async function getData() {
             const columns = row.split(',')
             const velocity = columns[0];
             const torque = columns[1];
-            xvals.push(velocity);
-            yvals.push(torque);
+            xvals.push(parseFloat(velocity).toFixed(0)); //this is horribly ill nested
+            yvals.push(parseFloat(torque));
             console.log(velocity, torque);
         });
     } catch (error) {
