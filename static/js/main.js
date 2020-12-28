@@ -24,7 +24,7 @@ async function getData(csvstring) {
     let url = csvstring;
     try {
         const res = await fetch(url);
-        const textdata = await (await res.text()).trim();
+        const textdata = (await res.text()).trim();
         //console.log(textdata);
         
         const labels = textdata.split('\n').slice(0,1); //put labels here
@@ -35,7 +35,7 @@ async function getData(csvstring) {
             const torque = columns[1];
             xvals.push(parseFloat(velocity).toFixed(0)); //this is horribly ill nested
             yvals.push(parseFloat(torque));
-            console.log(velocity, torque);
+            //console.log(velocity, torque);
         });
     } catch (error) {
         console.log(error);
@@ -66,8 +66,20 @@ async function makePlot(csvstring) {
             } 
         }
     });
+    return myChart
 };
 
+function addData(chart, label, data) {
+    chart.data.labels.push(label);
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.push(data);
+    });
+    chart.update();
+}
 
+const i3path = './static/csv/i3RealData.csv';
 const filepath = './static/csv/torques126kW.csv';
-makePlot(filepath);
+myChart = makePlot(filepath);
+const newdata = getData(i3path)
+console.log(newdata)
+addData(myChart, 'i3', newdata );
