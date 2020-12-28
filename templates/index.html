@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
 {%block head %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" defer></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
 {% endblock %}
 
 
@@ -14,7 +16,7 @@
         <input type="submit" value="run with arguments">
     </form>
 </div>
-
-<img src="static/images/{{ 'torque.png' }}" width="75%"/> 
-
+<div class="chart-container">
+    <canvas id="plot", width="600" height="400"></canvas>
+</div>
 {% endblock %}
