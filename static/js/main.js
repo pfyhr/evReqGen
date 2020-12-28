@@ -17,11 +17,11 @@
 }*/
 
 // Empty arrays for the data to be plotted
-const xvals = [];
-const yvals = [];
 
-async function getData() {
-    let url = './static/csv/torques126kW.csv';
+async function getData(csvstring) {
+    const xvals = [];
+    const yvals = [];
+    let url = csvstring;
     try {
         const res = await fetch(url);
         const textdata = await (await res.text()).trim();
@@ -40,23 +40,25 @@ async function getData() {
     } catch (error) {
         console.log(error);
     }
+    return {xvals, yvals}
 }
 
-async function makePlot() {
-    await getData();
+async function makePlot(csvstring) {
+    const datastore = await getData(csvstring);
     const ctx = document.getElementById('plot').getContext('2d');
     const myChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: xvals,
+            labels: datastore.xvals,
             datasets: [{
                 label: 'Generated torques',
-                data: yvals
+                data: datastore.yvals
                 }]
         },
         options: {
             scales: {
                 yAxes: [{
+                    //labelString: 'Torque [Nm]'
                     ticks: {
                         beginAtZero: true
                     }
@@ -66,4 +68,6 @@ async function makePlot() {
     });
 };
 
-makePlot();
+
+const filepath = './static/csv/torques126kW.csv';
+makePlot(filepath);
