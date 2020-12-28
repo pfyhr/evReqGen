@@ -1,0 +1,1 @@
+The csv files are sometimes without headers. If that is the case, the format is: Velocity [m/s], Torque [Nm].
