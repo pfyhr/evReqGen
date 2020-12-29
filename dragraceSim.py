@@ -85,12 +85,12 @@ desiredAccTime, muTire, wheelRadius):
             power = power * 0.75
         ### print intermediate outputs by uncommenting below
         #print('power=',power*1e-3) 
-        velocities  = np.empty(2**13)
-        torques     = np.empty(2**13) 
+        velocities  = np.zeros(2**13)
+        torques     = np.zeros(2**13) 
 
         while vCur < v1:
             if vCur > 0:
-                wheelForce = min(wheelForceMax, power/vCur)
+                wheelForce = np.minimum(wheelForceMax, power/vCur)
             else:
                 wheelForce = wheelForceMax 
 
@@ -98,7 +98,7 @@ desiredAccTime, muTire, wheelRadius):
                 break
             else:
                 loadDiff = wheelForce - topGradeSpeed(Cd, Cr, g, rhoAir, frontArea, mass, grade, vCur, wheelRadius)/wheelRadius
-            fDiff = min(loadDiff*transLoss, wheelForceMax)
+            fDiff = np.minimum(loadDiff*transLoss, wheelForceMax)
             acceleration = fDiff / mass
             vCur = vCur + acceleration*timeStep
             velocities[iterStep] = vCur
@@ -114,6 +114,9 @@ desiredAccTime, muTire, wheelRadius):
             print('Reqd power > 2 MW, its not gonna happen')
             break
 
+    torques = np.trim_zeros(torques, 'b')
+    velocities = np.trim_zeros(velocities, 'b')
+    
     return torques, velocities, power
 
 def plot_png(xs, ys):
