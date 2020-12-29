@@ -1,4 +1,3 @@
-
 import sympy as sym
 from sympy.solvers.solveset import linsolve
 import numpy as np
@@ -45,9 +44,10 @@ def tractionMax(mass, g, wtRearFrac, wheelbase, cgh, driveWheel, muTire):
 def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel, \
 desiredAccTime, muTire, wheelRadius):
     #debug output
-    print(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, \
-        wheelbase, driveWheel, \
-        desiredAccTime, muTire, wheelRadius) 
+    #print(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, \
+    #    wheelbase, driveWheel, \
+    #    desiredAccTime, muTire, wheelRadius) 
+
     #some constantas
     rhoAir      = 1.2
     g           = 9.81
@@ -63,9 +63,9 @@ desiredAccTime, muTire, wheelRadius):
     #initial value
     acceleration = 0
 
-    #call wheelforcemax
+    #call tractionForceMax
     wheelForceMax  = tractionMax(mass, g, wtRearFrac, wheelbase, cgh, driveWheel, muTire)
-    wheelTorqueMax = wheelForceMax * wheelRadius
+    #wheelTorqueMax = wheelForceMax * wheelRadius
 
     #start search for optimal wheeltorque curve given constraints.
     #initialize power and time with some high values
@@ -74,7 +74,7 @@ desiredAccTime, muTire, wheelRadius):
 
     while abs(simAccTime - desiredAccTime) > timeTol:
         #initialize temporary variables
-        iterStep = 1
+        iterStep = 0
         timeStep = 0.01
         vCur     = v0
         pCar     = 0 #momentum?
@@ -84,9 +84,9 @@ desiredAccTime, muTire, wheelRadius):
         else:
             power = power * 0.75
         ### print intermediate outputs by uncommenting below
-        print('power=',power*1e-3) 
-        velocities  = []
-        torques     = []
+        #print('power=',power*1e-3) 
+        velocities  = np.empty(2**13)
+        torques     = np.empty(2**13) 
 
         while vCur < v1:
             if vCur > 0:
@@ -101,8 +101,8 @@ desiredAccTime, muTire, wheelRadius):
             fDiff = min(loadDiff*transLoss, wheelForceMax)
             acceleration = fDiff / mass
             vCur = vCur + acceleration*timeStep
-            velocities.append(vCur)
-            torques.append(wheelForce*wheelRadius)
+            velocities[iterStep] = vCur
+            torques[iterStep] = (wheelForce*wheelRadius)
             pCar = pCar + vCur * timeStep
 
             #all done, go to next timestep
@@ -158,8 +158,8 @@ if __name__ == "__main__":
          v1, cgh, wtRearFrac, wheelbase, driveWheel, \
          desiredAccTime, muTire, wheelRadius)
 
-    message = plot_png(velocities, torques)
-    print(message)
+    #message = plot_png(velocities, torques)
+    #print(message)
     #message = output_json(torques, velocities, power)
     #print(message)
     message = output_csv(torques, velocities, power)
