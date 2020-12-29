@@ -44,16 +44,26 @@ async function getData(csvstring) {
 }
 
 async function makePlot(csvstring) {
-    const datastore = await getData(csvstring);
+    //const datastore = await getData(csvstring);
+    //const i3store = await getData(secondcsv);
+
+    const res = await fetch(csvstring);
+    console.log(res)
+    const textdata = await res.json();
+    console.log(textdata)
     const ctx = document.getElementById('plot').getContext('2d');
-    const myChart = new Chart(ctx, {
-        type: 'line',
+    var myChart = new Chart(ctx, {
+        type: 'scatter',
         data: {
-            labels: datastore.xvals,
+            //labels: datastore.xvals,
             datasets: [{
                 label: 'Generated torques',
-                data: datastore.yvals
-                }]
+                type: 'line',
+                borderColor: "#8e5ea2",
+                data: textdata.i3real
+            }
+            
+            ]
         },
         options: {
             scales: {
@@ -66,7 +76,7 @@ async function makePlot(csvstring) {
             } 
         }
     });
-    return myChart
+    //return myChart
 };
 
 function addData(chart, label, data) {
@@ -77,9 +87,9 @@ function addData(chart, label, data) {
     chart.update();
 }
 
-const i3path = './static/csv/i3RealData.csv';
-const filepath = './static/csv/torques126kW.csv';
-myChart = makePlot(filepath);
-const newdata = getData(i3path)
-console.log(newdata)
-addData(myChart, 'i3', newdata );
+const i3path = './static/csv/i3SimData.csv';
+const filepath = './static/json/i3RealData.json';
+makePlot(filepath);
+//const newdata = getData(i3path)
+//console.log(newdata)
+//addData(myChart, 'i3', newdata );

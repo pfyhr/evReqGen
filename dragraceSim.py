@@ -84,7 +84,7 @@ desiredAccTime, muTire, wheelRadius):
         else:
             power = power * 0.75
         ### print intermediate outputs by uncommenting below
-        #print('power=',power*1e-3) 
+        print('power=',power*1e-3) 
         velocities  = []
         torques     = []
 
@@ -144,17 +144,17 @@ def output_csv(torques, velocities, power):
     return 'done printing csv'
 
 if __name__ == "__main__":
-    mass = 1500
+    mass = 1500.0
     Cd = 0.3
-    frontArea = 2
-    grade = 0
-    v0 = 0
+    frontArea = 2.0
+    grade = 0.0
+    v0 = 0.0
     v1 = 100.0/3.6
     cgh = 0.6
     wtRearFrac = 0.56
     wheelbase = 2.5
     driveWheel = 'RWD'
-    desiredAccTime = 6
+    desiredAccTime = 6.0
     muTire = 0.9
     wheelRadius = 0.3
 
