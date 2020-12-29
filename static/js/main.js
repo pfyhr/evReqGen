@@ -57,7 +57,7 @@ async function makePlot(csvstring) {
         data: {
             //labels: datastore.xvals,
             datasets: [{
-                label: 'Generated torques',
+                label: textdata.power,
                 type: 'line',
                 borderColor: "#8e5ea2",
                 data: textdata.i3real

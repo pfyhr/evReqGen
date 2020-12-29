@@ -3,7 +3,7 @@ import sympy as sym
 from sympy.solvers.solveset import linsolve
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
+#import pandas as pd
 import csv
 
 def topGradeSpeed(Cd, Cr, g, rhoAir, frontArea, mass, grade, velocity, wheelRadius):
@@ -126,12 +126,6 @@ def plot_png(xs, ys):
     plt.savefig('static/images/torque.png', dpi=setdpi)
     return 'plotting done, see disk'
 
-def output_json(torques, velocities, power):
-    #this will be the ugliest workaround ever.
-    output_csv(torques, velocities, power)
-    df = pd.read_csv(f'static/csv/torques{power/1e3:.0f}kW.csv')
-    df.to_json(f'static/json/torques{power/1e3:.0f}kW.json')
-    return 'done printing json'
 
 
 def output_csv(torques, velocities, power):
@@ -166,8 +160,8 @@ if __name__ == "__main__":
 
     message = plot_png(velocities, torques)
     print(message)
-    message = output_json(torques, velocities, power)
-    print(message)
+    #message = output_json(torques, velocities, power)
+    #print(message)
     message = output_csv(torques, velocities, power)
     print(message)
 
