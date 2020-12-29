@@ -14,6 +14,7 @@ The MATLAB code runs four different configurations, including loading some .mat 
 $ python -m cProfile -s 'cumtime' -m dragraceSim > numpy2ProfileOutput
 
 $ head -20 numpy2ProfileOutput
+~~~
 done printing csv
 Power is 125.73131577766736 kW
          134974094 function calls (134768531 primitive calls) in 62.846 seconds
@@ -34,3 +35,4 @@ Power is 125.73131577766736 kW
 116584/116579    0.939    0.000   25.384    0.000 operations.py:46(__new__)
 228541/228431    0.360    0.000   23.209    0.000 assumptions.py:452(getit)
     77651    1.079    0.000   22.036    0.000 mul.py:111(flatten)
+~~~
