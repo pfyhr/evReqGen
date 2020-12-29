@@ -43,26 +43,37 @@ async function getData(csvstring) {
     return {xvals, yvals}
 }
 
-async function makePlot(csvstring) {
-    //const datastore = await getData(csvstring);
-    //const i3store = await getData(secondcsv);
-
+async function getJSON(csvstring) {
     const res = await fetch(csvstring);
-    console.log(res)
+    //console.log(res)
     const textdata = await res.json();
     console.log(textdata)
+    return textdata
+}
+
+async function makePlot(csvstring, csv2) {
+    //const datastore = await getData(csvstring);
+    //const i3store = await getData(secondcsv);
+    textdata = await getJSON(csvstring)
+    otherdata = await getJSON(csv2)
+    
     const ctx = document.getElementById('plot').getContext('2d');
     var myChart = new Chart(ctx, {
         type: 'scatter',
         data: {
             //labels: datastore.xvals,
-            datasets: [{
+            datasets: [ {
                 label: textdata.power,
                 type: 'line',
                 borderColor: "#8e5ea2",
                 data: textdata.i3real
+            },
+            {
+                label: otherdata.Leaf_real,
+                type: 'line',
+                borderColor: '#f7347a',
+                data: otherdata.name
             }
-            
             ]
         },
         options: {
@@ -87,9 +98,9 @@ function addData(chart, label, data) {
     chart.update();
 }
 
-const i3path = './static/csv/i3SimData.csv';
+const leaf = './static/json/leafRealData.json';
 const filepath = './static/json/i3RealData.json';
-makePlot(filepath);
+makePlot(filepath, leaf);
 //const newdata = getData(i3path)
 //console.log(newdata)
 //addData(myChart, 'i3', newdata );
