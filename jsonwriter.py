@@ -7,8 +7,8 @@ def output_json(csvfile, name, power):
     data = np.genfromtxt(csvfile, skip_header=0, delimiter=',')
     
     #make a dict of it, as naji suggested!
-    name = [{'x':i, 'y':j} for i,j in data] 
-    string_dict = {'name': name, 'Leaf_real': power}
+    xys = [{'x':i, 'y':j} for i,j in data] 
+    string_dict = {'xydata': xys, 'Power': power, 'Modelname': f'{name}'}
     
     #find the filename and put ut in the desired path
     fpath = pathlib.Path(csvfile)
