@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 #import pandas as pd
 import csv
 
+import time
+
+
 def topGradeSpeed(Cd, Cr, g, rhoAir, frontArea, mass, grade, velocity, wheelRadius):
     Froll = Cr * mass * g
     Fdrag = Cd*frontArea*rhoAir*(velocity)**2/2
@@ -13,6 +16,7 @@ def topGradeSpeed(Cd, Cr, g, rhoAir, frontArea, mass, grade, velocity, wheelRadi
     wheelTorque = Ftrac*wheelRadius
 
     return wheelTorque
+
 
 def tractionMax(mass, g, wtRearFrac, wheelbase, cgh, driveWheel, muTire):
     Fr = sym.Symbol('Fr')
@@ -27,7 +31,7 @@ def tractionMax(mass, g, wtRearFrac, wheelbase, cgh, driveWheel, muTire):
         eq3 = Fa - Ff*muTire
 
         X = linsolve([eq1, eq2, eq3], (Fr, Ff, Fa))
-        #extract the solution for eq3
+        # extract the solution for eq3
         wheelForceMax = X.args[0][2]
     else:
 
@@ -36,32 +40,26 @@ def tractionMax(mass, g, wtRearFrac, wheelbase, cgh, driveWheel, muTire):
         eq3 = Fa - Fr*muTire
 
         X = linsolve([eq1, eq2, eq3], (Fr, Ff, Fa))
-        #extract the solution for eq3
+        # extract the solution for eq3
         wheelForceMax = X.args[0][2]
-    print(type(wheelForceMax))
-    return wheelForceMax
 
-def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel, \
-desiredAccTime, muTire, wheelRadius):
-    #debug output
-    #print(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, \
-    #    wheelbase, driveWheel, \
-    #    desiredAccTime, muTire, wheelRadius) 
+    # cast to float for speed
+    return float(wheelForceMax)
 
-    #some constantas
-    rhoAir      = 1.2
-    g           = 9.81
-    Cr          = 0.01
-    transLoss   = 0.99**3
-    timeTol  = 0.1
 
-    #limit v1 max to
+def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel,
+                      desiredAccTime, muTire, wheelRadius):
+
+    # some constantas
+    rhoAir = 1.2
+    g = 9.81
+    Cr = 0.01
+    transLoss = 0.99**3
+
+    # limit v1 max to
     vmax = 151.0/3.6
     if v1 > vmax:
         v1 = vmax
-    
-    #initial value
-    acceleration = 0
 
     #call tractionForceMax
     wheelForceMax  = tractionMax(mass, g, wtRearFrac, wheelbase, cgh, driveWheel, muTire)
@@ -92,24 +90,28 @@ desiredAccTime, muTire, wheelRadius):
             if vCur > 0:
                 wheelForce = np.minimum(wheelForceMax, power/vCur)
             else:
-                wheelForce = wheelForceMax 
+                wheelForce = wheelForceMax
 
-            if wheelForce - topGradeSpeed(Cd, Cr, g, rhoAir, frontArea, mass, grade, vCur, wheelRadius)/wheelRadius <= 10:
+            tGS = topGradeSpeed(Cd, Cr, g, rhoAir, frontArea,
+                                mass, grade, vCur, wheelRadius)/wheelRadius
+
+            if wheelForce - tGS <= 10:
                 break
             else:
-                loadDiff = wheelForce - topGradeSpeed(Cd, Cr, g, rhoAir, frontArea, mass, grade, vCur, wheelRadius)/wheelRadius
-            fDiff = np.minimum(loadDiff*transLoss, wheelForceMax)
+                loadDiff = wheelForce - tGS
+
+            fDiff = min(loadDiff*transLoss, wheelForceMax)
             acceleration = fDiff / mass
             vCur = vCur + acceleration*timeStep
             velocities[iterStep] = vCur
             torques[iterStep] = (wheelForce*wheelRadius)
             pCar = pCar + vCur * timeStep
 
-            #all done, go to next timestep
+            # all done, go to next timestep
             iterStep += 1
-        #when a time is found, update the simulated acceleration time
+        # when a time is found, update the simulated acceleration time
         simAccTime = iterStep*timeStep
-        
+
         if power > 2e6:
             print('Reqd power > 2 MW, its not gonna happen')
             break
@@ -141,31 +143,22 @@ def output_csv(torques, velocities, power):
     return 'done printing csv'
 
 if __name__ == "__main__":
-    mass = 1500.0
+    mass = 1500.
     Cd = 0.3
-    frontArea = 2.0
-    grade = 0.0
-    v0 = 0.0
+    frontArea = 2.
+    grade = 0.
+    v0 = 0.
     v1 = 100.0/3.6
     cgh = 0.6
     wtRearFrac = 0.56
     wheelbase = 2.5
     driveWheel = 'RWD'
-    desiredAccTime = 6.0
+    desiredAccTime = 9.
     muTire = 0.9
     wheelRadius = 0.3
 
-    #an example string: 0.3, 2, 1300, 0, 0, 33, 0.5, 0.4, 2.5, 6, 0.95, 0.3
-
-    torques, velocities, power = accelerateVehicle(Cd, frontArea, mass, grade, v0,\
-         v1, cgh, wtRearFrac, wheelbase, driveWheel, \
-         desiredAccTime, muTire, wheelRadius)
-
-    #message = plot_png(velocities, torques)
-    #print(message)
-    #message = output_json(torques, velocities, power)
-    #print(message)
-    message = output_csv(torques, velocities, power)
-    print(message)
-
-    print(f'Power is {power*1e-3} kW')
+    start_time = time.time()
+    torques, velocities, power = accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel,
+                                                   desiredAccTime, muTire, wheelRadius)
+    dt = (time.time()-start_time)
+    print("Solution found {:.3f} kW in {:.3f} s".format(power*1e-3, dt))
