@@ -69,13 +69,15 @@ def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheel
     #initialize power and time with some high values
     power       = 10.0e3
     simAccTime  = 1.0e6
+    timeTol     = 0.1
 
     while abs(simAccTime - desiredAccTime) > timeTol:
         #initialize temporary variables
         iterStep = 0
         timeStep = 0.01
         vCur     = v0
-        pCar     = 0 #momentum?
+        pCar     = 0 #position!
+        
 
         if simAccTime > desiredAccTime+timeTol:
             power = power * (1+np.sqrt(5))/2
@@ -83,8 +85,8 @@ def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheel
             power = power * 0.75
         ### print intermediate outputs by uncommenting below
         #print('power=',power*1e-3) 
-        velocities  = np.zeros(2**13)
-        torques     = np.zeros(2**13) 
+        velocities  = []
+        torques     = [] 
 
         while vCur < v1:
             if vCur > 0:
@@ -103,8 +105,8 @@ def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheel
             fDiff = min(loadDiff*transLoss, wheelForceMax)
             acceleration = fDiff / mass
             vCur = vCur + acceleration*timeStep
-            velocities[iterStep] = vCur
-            torques[iterStep] = (wheelForce*wheelRadius)
+            velocities.append(vCur)
+            torques.append(wheelForce*wheelRadius)
             pCar = pCar + vCur * timeStep
 
             # all done, go to next timestep
@@ -116,8 +118,8 @@ def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheel
             print('Reqd power > 2 MW, its not gonna happen')
             break
 
-    torques = np.trim_zeros(torques, 'b')
-    velocities = np.trim_zeros(velocities, 'b')
+    #torques = np.trim_zeros(torques, 'b')
+    #velocities = np.trim_zeros(velocities, 'b')
     
     return torques, velocities, power
 
