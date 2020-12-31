@@ -38,7 +38,7 @@ def tractionMax(mass, g, wtRearFrac, wheelbase, cgh, driveWheel, muTire):
         X = linsolve([eq1, eq2, eq3], (Fr, Ff, Fa))
         #extract the solution for eq3
         wheelForceMax = X.args[0][2]
-    
+    print(type(wheelForceMax))
     return wheelForceMax
 
 def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel, \
