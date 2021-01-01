@@ -12,4 +12,5 @@ The Python code is now quite fast thanks to @vakuj and some assistance from @naj
 NP:       0.1813 s
 Vanilla:  0.1791 s
 MATLAB:   0.3651 s
+Gradient: 0.0175 s
 ```

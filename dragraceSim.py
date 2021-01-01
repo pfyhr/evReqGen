@@ -65,15 +65,12 @@ def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheel
     wheelForceMax  = tractionMax(mass, g, wtRearFrac, wheelbase, cgh, driveWheel, muTire)
     #wheelTorqueMax = wheelForceMax * wheelRadius
 
-    #start search for optimal wheeltorque curve given constraints.
-    #initialize power and time with some high values
-    power       = 10.0e3
-    simAccTime  = 1.0e6
-    timeTol     = 0.1
-
     # start search for optimal wheeltorque curve given constraints.
-    # initialize power and time with some high values
-    #prevpower = 2.5e3
+    # initialize power and time with some gues values, maybe
+    # here the guess should be based on one run...
+    # the while loop below should be broken out into a function.
+    # that removes the optimizing bit and just runs "a vehicle" with
+    # whatever power is chosen.
     power = 5e3
     simAccTime = 1e2
     timeTol = 0.01
@@ -128,9 +125,6 @@ def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheel
         if power > 2e6:
             print('Reqd power > 2 MW, its not gonna happen')
             break
-
-    #torques = np.trim_zeros(torques, 'b')
-    #velocities = np.trim_zeros(velocities, 'b')
     
     return torques, velocities, power
 

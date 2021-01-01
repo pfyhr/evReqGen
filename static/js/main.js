@@ -51,6 +51,110 @@ async function getJSON(csvstring) {
     return textdata
 }
 
+// [{
+//             label: 'Dataset with string point data',
+//             backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+//             borderColor: window.chartColors.red,
+//             fill: false,
+//             data: [{
+//                 x: newDateString(0),
+//                 y: randomScalingFactor()
+//             }, {
+//                 x: newDateString(2),
+//                 y: randomScalingFactor()
+//             }, {
+//                 x: newDateString(4),
+//                 y: randomScalingFactor()
+//             }, {
+//                 x: newDateString(5),
+//                 y: randomScalingFactor()
+//             }],
+//         },
+
+var color = Chart.helpers.color;
+var config = {
+    type: 'line',
+    data: {
+        datasets:  [{
+            label: 'Dataset with date object point data',
+            backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+            borderColor: window.chartColors.blue,
+            fill: false,
+            data: [{
+                x: newDate(0),
+                y: randomScalingFactor()
+            }, {
+                x: newDate(2),
+                y: randomScalingFactor()
+            }, {
+                x: newDate(4),
+                y: randomScalingFactor()
+            }, {
+                x: newDate(5),
+                y: randomScalingFactor()
+            }]
+        }]
+    },
+    options: {
+        responsive: true,
+        title: {
+            display: true,
+            text: 'Chart.js Time Point Data'
+        },
+        scales: {
+            xAxes: [{
+                type: 'data',
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Velocity [m/s]'
+                },
+                ticks: {
+                    major: {
+                        fontStyle: 'bold',
+                        fontColor: '#FF0000'
+                    }
+                }
+            }],
+            yAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Torque [Nm]'
+                }
+            }]
+        }
+    }
+};
+
+window.onload = function() {
+			var ctx = document.getElementById('canvas').getContext('2d');
+			window.myLine = new Chart(ctx, config);
+		};
+
+document.getElementById('addData').addEventListener('click', function() {
+			if (config.data.datasets.length > 0) {
+				config.data.datasets[0].data.push({
+					x: newDateString(config.data.datasets[0].data.length + 2),
+					y: randomScalingFactor()
+				});
+				config.data.datasets[1].data.push({
+					x: newDate(config.data.datasets[1].data.length + 2),
+					y: randomScalingFactor()
+				});
+
+				window.myLine.update();
+			}
+        });
+
+document.getElementById('removeData').addEventListener('click', function() {
+			config.data.datasets.forEach(function(dataset) {
+				dataset.data.pop();
+			});
+
+			window.myLine.update();
+		});
+
 async function makePlot(csvstring, csv2) {
     //const datastore = await getData(csvstring);
     //const i3store = await getData(secondcsv);
@@ -63,16 +167,16 @@ async function makePlot(csvstring, csv2) {
         data: {
             //labels: datastore.xvals,
             datasets: [ {
-                label: textdata.power,
+                label: textdata.Modelname,
                 type: 'line',
                 borderColor: "#8e5ea2",
-                data: textdata.i3real
+                data: textdata.xydata
             },
             {
-                label: otherdata.Leaf_real,
+                label: otherdata.Modelname,
                 type: 'line',
                 borderColor: '#f7347a',
-                data: otherdata.name
+                data: otherdata.xydata
             }
             ]
         },
