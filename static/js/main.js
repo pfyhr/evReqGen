@@ -51,8 +51,8 @@ async function makevehicledata() {
     //get data from jsonfiles
     const leaf = './static/json/leafRealData.json';
     const filepath = './static/json/i3RealData.json';
-    var textdata = getJSON(leaf);
-    const otherdata = getJSON(filepath);
+    const textdata = await getJSON(leaf);
+    const otherdata = await getJSON(filepath);
 
     //put the vehicle data in a struct that config understands
     var vehicledatas = {
@@ -112,19 +112,17 @@ async function makeconfig() {
 }
 
 window.onload = async () => {
-    config = await makeconfig();
+    var config = await makeconfig();
+    console.log(config)
     var ctx = document.getElementById('plot').getContext('2d');
     window.theplot = new Chart(ctx, config);
 };
 
 
-document.getElementById('randomizeData').addEventListener('click', function() {
-    console.log(vehicledatas)
-    vehicledatas.datasets.forEach(function(dataset) {
-				dataset.data = dataset.data.map(function() {
-                    return textdata.xydata; 
-				});
-			});
-            window.theplot.update();
-           }); 
+// document.getElementById('randomizeData').addEventListener('click', function() {
+//     console.log(vehicledatas.datasets[0])
+//     var leafxy = getJSON('./static/json/leafRealData.json');
+//     console.log(leafxy.xydata)
+//     window.theplot.update();
+// }); 
 
