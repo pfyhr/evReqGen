@@ -50,23 +50,23 @@ async function makevehicledata() {
     
     //get data from jsonfiles
     const leaf = './static/json/leafRealData.json';
-    const filepath = './static/json/i3RealData.json';
-    const textdata = await getJSON(leaf);
-    const otherdata = await getJSON(filepath);
+    const i3 = './static/json/i3RealData.json';
+    var leafdata = await getJSON(leaf);
+    var i3data = await getJSON(i3);
 
     //put the vehicle data in a struct that config understands
     var vehicledatas = {
         datasets: [{
-            label: textdata.Modelname,
+            label: leafdata.Modelname,
             type: 'line',
             borderColor: "#8e5ea2",
-            data: textdata.xydata
+            data: leafdata.xydata
         },
         {
-            label: otherdata.Modelname,
+            label: i3data.Modelname,
             type: 'line',
             borderColor: '#f7347a',
-            data: otherdata.xydata
+            data: i3data.xydata
         }]
     };
     return vehicledatas
@@ -78,40 +78,40 @@ async function makeconfig() {
         type: 'scatter',
         data: vehicledatas,
         options: {
-            responsive: true,
-            title: {
-                display: true,
-                text: 'Wheel torque data'
-            },
-            scales: {
-                xAxes: [{
-                    type: 'data',
-                    display: true,
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Velocity [m/s]'
-                    },
-                    ticks: {
-                        major: {
-                            fontStyle: 'bold',
-                            fontColor: '#FF0000'
-                        }
-                    }
-                }],
-                yAxes: [{
-                    display: true,
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Torque [Nm]'
-                    }
-                }]
-            }
+            // responsive: true,
+            // title: {
+            //     display: true,
+            //     text: 'Wheel torque data'
+            // },
+            // scales: {
+            //     xAxes: [{
+            //         type: 'data',
+            //         display: true,
+            //         scaleLabel: {
+            //             display: true,
+            //             labelString: 'Velocity [m/s]'
+            //         },
+            //         ticks: {
+            //             major: {
+            //                 fontStyle: 'bold',
+            //                 fontColor: '#FF0000'
+            //             }
+            //         }
+            //     }],
+            //     yAxes: [{
+            //         display: true,
+            //         scaleLabel: {
+            //             display: true,
+            //             labelString: 'Torque [Nm]'
+            //         }
+            //     }]
+            // }
         }
     };
     return config;
 }
 
-window.onload = async () => {
+window.onload = async function() {
     var config = await makeconfig();
     console.log(config)
     var ctx = document.getElementById('plot').getContext('2d');
