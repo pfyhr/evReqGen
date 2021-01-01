@@ -71,22 +71,33 @@ def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheel
     simAccTime  = 1.0e6
     timeTol     = 0.1
 
-    while abs(simAccTime - desiredAccTime) > timeTol:
-        #initialize temporary variables
-        iterStep = 0
-        timeStep = 0.01
-        vCur     = v0
-        pCar     = 0 #position!
-        
+    # start search for optimal wheeltorque curve given constraints.
+    # initialize power and time with some high values
+    #prevpower = 2.5e3
+    power = 5e3
+    simAccTime = 1e2
+    timeTol = 0.01
+    timeStep = 0.01
 
-        if simAccTime > desiredAccTime+timeTol:
-            power = power * (1+np.sqrt(5))/2
-        else:
-            power = power * 0.75
-        ### print intermediate outputs by uncommenting below
-        #print('power=',power*1e-3) 
-        velocities  = []
-        torques     = [] 
+    while abs(simAccTime - desiredAccTime) > timeTol:
+        # initialize temporary variables
+        iterStep = 1
+        vCur = v0
+        pCar = 0.  #position!
+
+        #try to come up with some nicer way to converge to the correct solution
+        #store two previous powers, and use some linear extrapolation from that
+
+        #some ratio of the previous and most recently tried power
+        #below will be some factor with sign if power should increase or decrease
+        timeratio = (simAccTime - desiredAccTime)/desiredAccTime
+        #store back prev before overwriting
+        prevpower = power
+        power = prevpower + (prevpower * timeratio)
+
+        print('power=', power*1e-3)
+        velocities = []
+        torques = []
 
         while vCur < v1:
             if vCur > 0:
@@ -145,7 +156,7 @@ def output_csv(torques, velocities, power):
     return 'done printing csv'
 
 if __name__ == "__main__":
-    mass = 1500.
+    mass = 1800.
     Cd = 0.3
     frontArea = 2.
     grade = 0.
