@@ -70,23 +70,29 @@ def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheel
 
     # start search for optimal wheeltorque curve given constraints.
     # initialize power and time with some high values
-    power = 10e3
-    simAccTime = 1e6
+    #prevpower = 2.5e3
+    power = 5e3
+    simAccTime = 1e2
+    timeTol = 0.01
+    timeStep = 0.01
 
-    while abs(simAccTime - desiredAccTime) > 0.01:
+    while abs(simAccTime - desiredAccTime) > timeTol:
         # initialize temporary variables
         iterStep = 1
-        timeStep = 0.01
         vCur = v0
-        pCar = 0.  # momentum?
-        timeTol = 0.1
+        pCar = 0.  #position!
 
-        if simAccTime > desiredAccTime+timeTol:
-            power = power * (1+np.sqrt(5))/2
-        else:
-            power = power * 0.75
+        #try to come up with some nicer way to converge to the correct solution
+        #store two previous powers, and use some linear extrapolation from that
 
-        # print('power=', power*1e-3)
+        #some ratio of the previous and most recently tried power
+        #below will be some factor with sign if power should increase or decrease
+        timeratio = (simAccTime - desiredAccTime)/desiredAccTime
+        #store back prev before overwriting
+        prevpower = power
+        power = prevpower + (prevpower * timeratio)
+
+        print('power=', power*1e-3)
         velocities = []
         torques = []
 
@@ -124,7 +130,7 @@ def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheel
 
 
 if __name__ == "__main__":
-    mass = 1500.
+    mass = 1800.
     Cd = 0.3
     frontArea = 2.
     grade = 0.
