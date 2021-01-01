@@ -1,22 +1,17 @@
-/*fetch("./static/json/torques126kW.json")
-    .then(response => {
-        return response.json();
-    })
-.then(jsondata => console.log(jsondata));*/
+// the javascript file that makes plots, gets data and so on.
 
-/*async function getData() {
-    let url = './static/json/torques126kW.json';
-    try {
-        const res = await fetch(url);
-        const jsondata =  await res.json();
-        const textdata = await res.text();
-        console.log(jsondata)
-    } catch (error) {
-        console.log(error);
-    }
-}*/
+//some colorconfig from chart.js
+var color = Chart.helpers.color;
 
-// Empty arrays for the data to be plotted
+window.chartColors = {
+	red: 'rgb(255, 99, 132)',
+	orange: 'rgb(255, 159, 64)',
+	yellow: 'rgb(255, 205, 86)',
+	green: 'rgb(75, 192, 192)',
+	blue: 'rgb(54, 162, 235)',
+	purple: 'rgb(153, 102, 255)',
+	grey: 'rgb(201, 203, 207)'
+};
 
 async function getData(csvstring) {
     const xvals = [];
@@ -51,160 +46,85 @@ async function getJSON(csvstring) {
     return textdata
 }
 
-// [{
-//             label: 'Dataset with string point data',
-//             backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
-//             borderColor: window.chartColors.red,
-//             fill: false,
-//             data: [{
-//                 x: newDateString(0),
-//                 y: randomScalingFactor()
-//             }, {
-//                 x: newDateString(2),
-//                 y: randomScalingFactor()
-//             }, {
-//                 x: newDateString(4),
-//                 y: randomScalingFactor()
-//             }, {
-//                 x: newDateString(5),
-//                 y: randomScalingFactor()
-//             }],
-//         },
-
-var color = Chart.helpers.color;
-var config = {
-    type: 'line',
-    data: {
-        datasets:  [{
-            label: 'Dataset with date object point data',
-            backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
-            borderColor: window.chartColors.blue,
-            fill: false,
-            data: [{
-                x: newDate(0),
-                y: randomScalingFactor()
-            }, {
-                x: newDate(2),
-                y: randomScalingFactor()
-            }, {
-                x: newDate(4),
-                y: randomScalingFactor()
-            }, {
-                x: newDate(5),
-                y: randomScalingFactor()
-            }]
-        }]
-    },
-    options: {
-        responsive: true,
-        title: {
-            display: true,
-            text: 'Chart.js Time Point Data'
-        },
-        scales: {
-            xAxes: [{
-                type: 'data',
-                display: true,
-                scaleLabel: {
-                    display: true,
-                    labelString: 'Velocity [m/s]'
-                },
-                ticks: {
-                    major: {
-                        fontStyle: 'bold',
-                        fontColor: '#FF0000'
-                    }
-                }
-            }],
-            yAxes: [{
-                display: true,
-                scaleLabel: {
-                    display: true,
-                    labelString: 'Torque [Nm]'
-                }
-            }]
-        }
-    }
-};
-
-window.onload = function() {
-			var ctx = document.getElementById('canvas').getContext('2d');
-			window.myLine = new Chart(ctx, config);
-		};
-
-document.getElementById('addData').addEventListener('click', function() {
-			if (config.data.datasets.length > 0) {
-				config.data.datasets[0].data.push({
-					x: newDateString(config.data.datasets[0].data.length + 2),
-					y: randomScalingFactor()
-				});
-				config.data.datasets[1].data.push({
-					x: newDate(config.data.datasets[1].data.length + 2),
-					y: randomScalingFactor()
-				});
-
-				window.myLine.update();
-			}
-        });
-
-document.getElementById('removeData').addEventListener('click', function() {
-			config.data.datasets.forEach(function(dataset) {
-				dataset.data.pop();
-			});
-
-			window.myLine.update();
-		});
-
-async function makePlot(csvstring, csv2) {
-    //const datastore = await getData(csvstring);
-    //const i3store = await getData(secondcsv);
-    textdata = await getJSON(csvstring)
-    otherdata = await getJSON(csv2)
+async function makevehicledata() {
     
-    const ctx = document.getElementById('plot').getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'scatter',
-        data: {
-            //labels: datastore.xvals,
-            datasets: [ {
-                label: textdata.Modelname,
-                type: 'line',
-                borderColor: "#8e5ea2",
-                data: textdata.xydata
-            },
-            {
-                label: otherdata.Modelname,
-                type: 'line',
-                borderColor: '#f7347a',
-                data: otherdata.xydata
-            }
-            ]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    //labelString: 'Torque [Nm]'
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
-            } 
-        }
-    });
-    //return myChart
-};
+    //get data from jsonfiles
+    const leaf = './static/json/leafRealData.json';
+    const filepath = './static/json/i3RealData.json';
+    var textdata = getJSON(leaf);
+    const otherdata = getJSON(filepath);
 
-function addData(chart, label, data) {
-    chart.data.labels.push(label);
-    chart.data.datasets.forEach((dataset) => {
-        dataset.data.push(data);
-    });
-    chart.update();
+    //put the vehicle data in a struct that config understands
+    var vehicledatas = {
+        datasets: [{
+            label: textdata.Modelname,
+            type: 'line',
+            borderColor: "#8e5ea2",
+            data: textdata.xydata
+        },
+        {
+            label: otherdata.Modelname,
+            type: 'line',
+            borderColor: '#f7347a',
+            data: otherdata.xydata
+        }]
+    };
+    return vehicledatas
 }
 
-const leaf = './static/json/leafRealData.json';
-const filepath = './static/json/i3RealData.json';
-makePlot(filepath, leaf);
-//const newdata = getData(i3path)
-//console.log(newdata)
-//addData(myChart, 'i3', newdata );
+async function makeconfig() {
+    vehicledatas = await makevehicledata();
+    var config = {
+        type: 'scatter',
+        data: vehicledatas,
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                text: 'Wheel torque data'
+            },
+            scales: {
+                xAxes: [{
+                    type: 'data',
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Velocity [m/s]'
+                    },
+                    ticks: {
+                        major: {
+                            fontStyle: 'bold',
+                            fontColor: '#FF0000'
+                        }
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Torque [Nm]'
+                    }
+                }]
+            }
+        }
+    };
+    return config;
+}
+
+window.onload = async () => {
+    config = await makeconfig();
+    var ctx = document.getElementById('plot').getContext('2d');
+    window.theplot = new Chart(ctx, config);
+};
+
+
+document.getElementById('randomizeData').addEventListener('click', function() {
+    console.log(vehicledatas)
+    vehicledatas.datasets.forEach(function(dataset) {
+				dataset.data = dataset.data.map(function() {
+                    return textdata.xydata; 
+				});
+			});
+            window.theplot.update();
+           }); 
+
