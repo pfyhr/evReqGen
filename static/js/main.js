@@ -1,4 +1,10 @@
 // the javascript file that makes plots, gets data and so on.
+//get data from jsonfiles
+const leaf_real = './static/json/leafRealData.json';
+const i3_real = './static/json/i3RealData.json';
+const egolf_sim = '.static/json/egolfSimData.json';
+const model3_sim = './static/json/model3SimData.json';
+//cars
 
 //some colorconfig from chart.js
 var color = Chart.helpers.color;
@@ -45,41 +51,26 @@ async function getJSON(csvstring) {
     console.log(textdata)
     return textdata
 }
-async function makeleafstruct() {
-    const leaf = './static/json/leafRealData.json';
-    var leafdata = await getJSON(leaf);
-    var leafstruct = {
-        label: leafdata.Modelname,
+async function makecarstruct(car) {
+    var cardata = await getJSON(car);
+    var carstruct = {
+        label: cardata.Modelname,
         type: 'line',
-        borderColor: "#8e5ea2",
-        data: leafdata.xydata
+        borderColor: window.chartColors.red,
+        data: cardata.xydata
     };
-    return leafstruct
+    return carstruct
 }
 
 async function makevehicledata() {
-    
-    //get data from jsonfiles
-    const leaf = './static/json/leafRealData.json';
-    const i3 = './static/json/i3RealData.json';
-    var leafdata = await getJSON(leaf);
-    var i3data = await getJSON(i3);
-
-    
+    var leaf = await makecarstruct(leaf_real);
+    var egolf = await makecarstruct(i3_real);
     //put the vehicle data in a struct that config understands
     var vehicledatas = {
-        datasets: [{
-            label: leafdata.Modelname,
-            type: 'line',
-            borderColor: "#8e5ea2",
-            data: leafdata.xydata
-        },
-        {
-            label: i3data.Modelname,
-            type: 'line',
-            borderColor: '#f7347a',
-            data: i3data.xydata
-        }]
+        datasets: [
+            leaf,
+            egolf
+        ]
     };
     return vehicledatas
 }
@@ -90,38 +81,42 @@ async function makeconfig() {
         type: 'scatter',
         data: vehicledatas,
         options: {
-            // responsive: true,
-            // title: {
-            //     display: true,
-            //     text: 'Wheel torque data'
-            // },
-            // scales: {
-            //     xAxes: [{
-            //         type: 'data',
-            //         display: true,
-            //         scaleLabel: {
-            //             display: true,
-            //             labelString: 'Velocity [m/s]'
-            //         },
-            //         ticks: {
-            //             major: {
-            //                 fontStyle: 'bold',
-            //                 fontColor: '#FF0000'
-            //             }
-            //         }
-            //     }],
-            //     yAxes: [{
-            //         display: true,
-            //         scaleLabel: {
-            //             display: true,
-            //             labelString: 'Torque [Nm]'
-            //         }
-            //     }]
-            // }
+            //responsive: true,
+            title: {
+                display: true,
+                text: 'Wheel torque data'
+            },
+            scales: {
+                 xAxes: [{
+                    //type: 'data',
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Velocity [m/s]'
+                    },
+                    ticks: {
+                        major: {
+                            fontStyle: 'bold',
+                            fontColor: '#FF0000'
+                        }
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    },
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Torque [Nm]'
+                    }
+                }]
+            }
         }
+    }
+        return config;
     };
-    return config;
-}
+
 
 window.onload = async function() {
     var config = await makeconfig();
@@ -141,9 +136,9 @@ document.getElementById('removeData').addEventListener('click', function() {
 }); 
 
 document.getElementById('addData').addEventListener('click', async function() {
-    var leafstruct = await makeleafstruct();
-    vehicledatas.datasets.push(leafstruct);
-    console.log(leafstruct)
+    var newstruct = await makecarstruct(model3_sim);
+    vehicledatas.datasets.push(newstruct);
+    console.log(newstruct)
     //var leafxy = getJSON('./static/json/leafRealData.json');
     //console.log(leafxy.xydata)
     window.theplot.update();
