@@ -45,6 +45,17 @@ async function getJSON(csvstring) {
     console.log(textdata)
     return textdata
 }
+async function makeleafstruct() {
+    const leaf = './static/json/leafRealData.json';
+    var leafdata = await getJSON(leaf);
+    var leafstruct = [{
+        label: leafdata.Modelname,
+        type: 'scatter',
+        borderColor: "#8e5ea2",
+        data: leafdata.xydata
+    }];
+    return leafstruct
+}
 
 async function makevehicledata() {
     
@@ -54,6 +65,7 @@ async function makevehicledata() {
     var leafdata = await getJSON(leaf);
     var i3data = await getJSON(i3);
 
+    
     //put the vehicle data in a struct that config understands
     var vehicledatas = {
         datasets: [{
@@ -118,11 +130,21 @@ window.onload = async function() {
     window.theplot = new Chart(ctx, config);
 };
 
+        
+document.getElementById('removeData').addEventListener('click', function() {
+    //console.log(vehicledatas.datasets.length)
+    var element = vehicledatas.datasets.pop();
+    //console.log(element)
+    //var leafxy = getJSON('./static/json/leafRealData.json');
+    //console.log(leafxy.xydata)
+    window.theplot.update();
+}); 
 
-// document.getElementById('randomizeData').addEventListener('click', function() {
-//     console.log(vehicledatas.datasets[0])
-//     var leafxy = getJSON('./static/json/leafRealData.json');
-//     console.log(leafxy.xydata)
-//     window.theplot.update();
-// }); 
-
+document.getElementById('addData').addEventListener('click', function() {
+    var leafstruct = makeleafstruct();
+    vehicledatas.datasets.push(leafstruct);
+    console.log(leafstruct)
+    //var leafxy = getJSON('./static/json/leafRealData.json');
+    //console.log(leafxy.xydata)
+    window.theplot.update();
+}); 
