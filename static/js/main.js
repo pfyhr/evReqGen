@@ -48,12 +48,12 @@ async function getJSON(csvstring) {
 async function makeleafstruct() {
     const leaf = './static/json/leafRealData.json';
     var leafdata = await getJSON(leaf);
-    var leafstruct = [{
+    var leafstruct = {
         label: leafdata.Modelname,
-        type: 'scatter',
+        type: 'line',
         borderColor: "#8e5ea2",
         data: leafdata.xydata
-    }];
+    };
     return leafstruct
 }
 
@@ -140,8 +140,8 @@ document.getElementById('removeData').addEventListener('click', function() {
     window.theplot.update();
 }); 
 
-document.getElementById('addData').addEventListener('click', function() {
-    var leafstruct = makeleafstruct();
+document.getElementById('addData').addEventListener('click', async function() {
+    var leafstruct = await makeleafstruct();
     vehicledatas.datasets.push(leafstruct);
     console.log(leafstruct)
     //var leafxy = getJSON('./static/json/leafRealData.json');
