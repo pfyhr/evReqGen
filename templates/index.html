@@ -17,4 +17,77 @@
 <div class="chart-container">
     <canvas id="plot", width="600" height="400"></canvas>
 </div>
+
+<form action="/" method="post">
+        
+    <label for="Cd">Drag coefficient [-]: </label>
+    <input type="text" id="Cd" name="Cd" required
+        size="6" 
+        placeholder="0.31" >
+        
+        
+    <label for="frontArea">Front area [m^2]: </label>
+    <input type="text" id="frontArea" name="frontArea" required
+        size="6" 
+        placeholder="2.1" >
+        
+    <label for="mass">Vehicle mass [kg]: </label>
+    <input type="text" id="mass" name="mass" required
+        size="6" 
+        placeholder="1800" >
+
+    <label for="grade">Road grade (rad?): </label>
+        <input type="text" id="grade" name="grade" required
+        size="6" 
+        placeholder="0.0" >
+        
+        
+    <label for="v0">Start speed [m/s]: </label>
+        <input type="text" id="v0" name="v0" required
+        size="6" 
+        placeholder="0.0" >
+        
+    <label for="v1">Final speed [m/s]: </label>
+        <input type="text" id="v1" name="v1" required
+        size="6" 
+        placeholder="27.78" >
+
+    <label for="cgh">Center of gravity height [m]: </label>
+        <input type="text" id="cgh" name="cgh" required
+        size="6" 
+        placeholder="0.5" >
+
+    <label for="wtRearFrac">Fraction of weight rear [-]: </label>
+        <input type="text" id="wtRearFrac" name="wtRearFrac" required
+        size="6" 
+        placeholder="0.45" >
+
+    <label for="wheelbase">Wheelbase [m]: </label>
+        <input type="text" id="wheelbase" name="wheelbase" required
+        size="6" 
+        placeholder="2.5" >
+
+    <label for="driveWheel">Driven wheels ['FWD'/'RWD'/'AWD']: </label>
+        <input type="text" id="driveWheel" name="driveWheel" required
+        size="6" 
+        placeholder=" 'RWD' " >
+
+    <label for="desiredAccTime">Desired acc time [s]: </label>
+        <input type="text" id="desiredAccTime" name="desiredAccTime" required
+        size="6" 
+        placeholder="8.1" >
+
+    <label for="muTire">Tire friction [-]: </label>
+        <input type="text" id="muTire" name="muTire" required
+        size="6" 
+        placeholder="0.95" >
+
+    <label for="wheelRadius">Wheelradius [m]: </label>
+        <input type="text" id="wheelRadius" name="wheelRadius" required
+        size="6" 
+        placeholder="0.3" >
+
+    <button id="submitData">Run Simulation</button>
+</form>
+
 {% endblock %}
