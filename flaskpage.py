@@ -5,6 +5,10 @@ app = Flask(__name__)
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
+    return render_template('index.html')
+
+@app.route('/runsim', methods=['POST', 'GET'])
+def sim():
     if request.method == 'POST':
         Cd              = float(request.form['Cd'])
         frontArea       = float(request.form['frontArea'])
@@ -33,15 +37,22 @@ def index():
             
             #print(power/1e3)
             #message = dragraceSim.plot_png(velocities, torques)
-            #print(simfile)
+            print(simfile)
             #response = make_response(render_template('index.html'))
             #response.headers['simdata'] = jsonify(simfile)
-            return render_template('index.html', simdata=jsonify(simfile)) 
+            return simfile
+            #return render_template('index.html', simfile=jsonify(simfile)) 
+            # headers = {"Content-Type": "application/json"}
+            # return make_response(
+            #     simfile,
+            #     200,
+            #     headers=headers
+            #     )
         except:
             return 'some issue occured'
 
-    else:
-        return render_template('index.html')
+    #else:
+    #    return render_template('index.html')
 
 #@app.route('/sim', methods=['POST'])
 

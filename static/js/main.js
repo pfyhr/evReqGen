@@ -11,15 +11,6 @@
 //     //SpeechRecognitionAlternative(responseObj.message);
 // };
 
-fetch('/')
-    .then(function (response) {
-        console.log(respose);
-        return response.text();
-    }).then(function (text) {
-        console.log('GET response text:');
-        console.log(text);
-    });
-
 
 //get data from jsonfiles
 const leaf_real = './static/json/leafRealData.json';
@@ -173,10 +164,56 @@ document.getElementById('addData').addEventListener('click', async function() {
 });
 
 //this tries to take the returned simfile and push it to the chart
-async function pushSimData(simfile) {
-    var simstruct = await makecarstruct(simfile);
-    vehicledatas.datasets.push(simstruct);
-    console.log(simstruct)
-    window.theplot.update();
-};
+// document.getElementById('submitData').addEventListener('click', async function() {
+//     //event.preventDefault();
+//     var datafromsim = await simdata();
+//     var simstruct = await makecarstruct( datafromsim );
+//     vehicledatas.datasets.push(simstruct);
+//     console.log(simstruct)
+//     window.theplot.update();
+// });
+
+const formElem = document.querySelector('form');
+const formData = new FormData(document.querySelector('form'))
+formElem.addEventListener('submitData', (e) => {
+    // on form submission, prevent default
+    e.preventDefault();
+    
+    // construct a FormData object, which fires the formdata event
+    new FormData(formElem);
+});
+formElem.onformdata = (e) => {
+    console.log('formdata fired');
+    
+    // Get the form data from the event object
+    let data = e.formData;
+    for (var value of data.values()) {
+        console.log(value); 
+    }
+    
+    // submit the data via XHR
+    var request = new XMLHttpRequest();
+    request.open("POST", "/runsim");
+    request.send(data);
+    };
+
+    // //const body = Cd; // whatever you want to send in the body of the HTTP request
+    // console.log(body)
+    // const headers = {"Content-type": "application/x-www-form-urlencoded"}; // if you're sending JSON to the server
+    // const method = 'POST';
+    // const response = await fetch(url, formData); //{ method, body, headers }
+    // const data = await response.json(); // or response.json() if your server returns JSON
+    // console.log(data);
+//}
+
+
+
+// fetch('/runsim')
+//     .then(function (response) {
+//         console.log(respose);
+//         return response.text();
+//     }).then(function (text) {
+//         console.log('GET response text:');
+//         console.log(text);
+//     });
 

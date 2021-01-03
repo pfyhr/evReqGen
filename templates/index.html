@@ -18,7 +18,7 @@
     <canvas id="plot", width="600" height="400"></canvas>
 </div>
 
-<form action="/" method="post">
+<form name="siminput">
         
     <label for="Cd">Drag coefficient [-]: </label>
     <input type="text" id="Cd" name="Cd" required
@@ -89,5 +89,9 @@
 
     <button id="submitData">Run Simulation</button>
 </form>
+
+<!-- <script>
+    var simdata = {{simfile}}
+</script> -->
 
 {% endblock %}
