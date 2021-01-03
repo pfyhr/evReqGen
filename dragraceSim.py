@@ -138,8 +138,6 @@ def plot_png(xs, ys):
     plt.savefig('static/images/torque.png', dpi=setdpi)
     return 'plotting done, see disk'
 
-
-
 def output_csv(torques, velocities, power):
     with open(f'static/csv/torques{power/1e3:.0f}kW.csv', 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',', \
@@ -148,6 +146,17 @@ def output_csv(torques, velocities, power):
         for i, val in enumerate(torques):
             writer.writerow([velocities[i], torques[i]])
     return 'done printing csv'
+
+def sim_json(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel,
+                                                   desiredAccTime, muTire, wheelRadius):
+    #run the simulation
+    torques, velocities, power = accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel,
+                                                   desiredAccTime, muTire, wheelRadius)
+
+    #make a dict of it, as naji suggested!
+    xys = [{'x':i, 'y':j} for i,j in zip(velocities, torques)] 
+    string_dict = {'xydata': xys, 'Power': power*1e-3, 'Modelname': 'sim'}
+    return string_dict
 
 if __name__ == "__main__":
     mass = 1800.
@@ -165,7 +174,9 @@ if __name__ == "__main__":
     wheelRadius = 0.3
 
     start_time = time.time()
-    torques, velocities, power = accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel,
-                                                   desiredAccTime, muTire, wheelRadius)
+    json = sim_json(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel, \
+                                                  desiredAccTime, muTire, wheelRadius)
     dt = (time.time()-start_time)
-    print("Solution found {:.3f} kW in {:.3f} s".format(power*1e-3, dt))
+    
+    print("Solution found {:.3f} kW in {:.3f} s".format(json['Power']*1e-3, dt))
+    #print(json)

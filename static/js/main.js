@@ -1,4 +1,26 @@
 // the javascript file that makes plots, gets data and so on.
+
+
+// let xhr = new XMLHttpRequest();
+// xhr.open('GET', '/simdata');
+// xhr.responseType = 'json';
+// xhr.send();
+// xhr.onload = function() {
+//     let responseObj = xhr.response;
+//     console.log(responseObj.message)
+//     //SpeechRecognitionAlternative(responseObj.message);
+// };
+
+fetch('/')
+    .then(function (response) {
+        console.log(respose);
+        return response.text();
+    }).then(function (text) {
+        console.log('GET response text:');
+        console.log(text);
+    });
+
+
 //get data from jsonfiles
 const leaf_real = './static/json/leafRealData.json';
 const i3_real = './static/json/i3RealData.json';
@@ -19,6 +41,7 @@ window.chartColors = {
 	grey: 'rgb(201, 203, 207)'
 };
 
+//make a jsondata from a CSVfile, not used anymore.
 async function getData(csvstring) {
     const xvals = [];
     const yvals = [];
@@ -36,7 +59,6 @@ async function getData(csvstring) {
             const torque = columns[1];
             xvals.push(parseFloat(velocity).toFixed(0)); //this is horribly ill nested
             yvals.push(parseFloat(torque));
-            //console.log(velocity, torque);
         });
     } catch (error) {
         console.log(error);
@@ -44,6 +66,7 @@ async function getData(csvstring) {
     return {xvals, yvals}
 }
 
+//fetch some JSON file from disk
 async function getJSON(csvstring) {
     const res = await fetch(csvstring);
     //console.log(res)
@@ -51,6 +74,8 @@ async function getJSON(csvstring) {
     console.log(textdata)
     return textdata
 }
+
+//make a json for one car, passed as function input
 async function makecarstruct(car) {
     var cardata = await getJSON(car);
     var carstruct = {
@@ -62,6 +87,7 @@ async function makecarstruct(car) {
     return carstruct
 }
 
+//create a vehicle dataset, containing two vehicles
 async function makevehicledata() {
     var leaf = await makecarstruct(leaf_real);
     var egolf = await makecarstruct(i3_real);
@@ -75,6 +101,7 @@ async function makevehicledata() {
     return vehicledatas
 }
 
+//make the config json for the vehicle data above
 async function makeconfig() {
     vehicledatas = await makevehicledata();
     var config = {
@@ -117,7 +144,7 @@ async function makeconfig() {
         return config;
     };
 
-
+//finally create the chart, using the generated config
 window.onload = async function() {
     var config = await makeconfig();
     console.log(config)
@@ -125,7 +152,7 @@ window.onload = async function() {
     window.theplot = new Chart(ctx, config);
 };
 
-        
+//this pops the last added data from the chart        
 document.getElementById('removeData').addEventListener('click', function() {
     //console.log(vehicledatas.datasets.length)
     var element = vehicledatas.datasets.pop();
@@ -135,6 +162,7 @@ document.getElementById('removeData').addEventListener('click', function() {
     window.theplot.update();
 }); 
 
+//this adds a predetermined data at the moment
 document.getElementById('addData').addEventListener('click', async function() {
     var newstruct = await makecarstruct(model3_sim);
     vehicledatas.datasets.push(newstruct);
@@ -142,4 +170,13 @@ document.getElementById('addData').addEventListener('click', async function() {
     //var leafxy = getJSON('./static/json/leafRealData.json');
     //console.log(leafxy.xydata)
     window.theplot.update();
-}); 
+});
+
+//this tries to take the returned simfile and push it to the chart
+async function pushSimData(simfile) {
+    var simstruct = await makecarstruct(simfile);
+    vehicledatas.datasets.push(simstruct);
+    console.log(simstruct)
+    window.theplot.update();
+};
+
