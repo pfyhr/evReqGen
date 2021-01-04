@@ -1,3 +1,4 @@
+from os import name
 from flask import Flask, render_template, url_for, request, jsonify, make_response
 import dragraceSim
 
@@ -23,9 +24,10 @@ def sim():
         desiredAccTime  = float(request.form['desiredAccTime'])
         muTire          = float(request.form['muTire'])
         wheelRadius     = float(request.form['wheelRadius'])
+        name            = request.form['Name']
         #ata = request.data
         print('running with:', Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, \
-             wheelbase, driveWheel, desiredAccTime, muTire, wheelRadius)
+             wheelbase, driveWheel, desiredAccTime, muTire, wheelRadius, name)
         
         try:
             #print('json data', request.get_json())
@@ -40,7 +42,7 @@ def sim():
             #print('request json', request.get_json(force=True))
 
             simfile = dragraceSim.sim_json(Cd, frontArea, mass, \
-                grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel, desiredAccTime, muTire, wheelRadius)
+                grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel, desiredAccTime, muTire, wheelRadius, name)
             
             #print(power/1e3)
             #message = dragraceSim.plot_png(velocities, torques)

@@ -13,10 +13,10 @@
 
 
 //get data from jsonfiles
-const leaf_real = './static/json/leafRealData.json';
-const i3_real = './static/json/i3RealData.json';
-const egolf_sim = '.static/json/egolfSimData.json';
-const model3_sim = './static/json/model3SimData.json';
+const leaf_real = './/static//json//leafRealData.json';
+const i3_real = './/static//json//i3RealData.json';
+const egolf_sim = './/static//json//egolfSimData.json';
+const model3_sim = './/static//json//model3SimData.json';
 //cars
 
 //some colorconfig from chart.js
@@ -80,8 +80,8 @@ async function makecarstruct(car) {
 
 //create a vehicle dataset, containing two vehicles
 async function makevehicledata() {
-    var leaf = await makecarstruct(leaf_real);
-    var egolf = await makecarstruct(i3_real);
+    var leaf = await makecarstruct(getJSON(leaf_real));
+    var egolf = await makecarstruct(getJSON(i3_real));
     //put the vehicle data in a struct that config understands
     var vehicledatas = {
         datasets: [

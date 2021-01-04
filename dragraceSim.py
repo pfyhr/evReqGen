@@ -148,14 +148,14 @@ def output_csv(torques, velocities, power):
     return 'done printing csv'
 
 def sim_json(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel,
-                                                   desiredAccTime, muTire, wheelRadius):
+                                                   desiredAccTime, muTire, wheelRadius, name):
     #run the simulation
     torques, velocities, power = accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel,
                                                    desiredAccTime, muTire, wheelRadius)
 
     #make a dict of it, as naji suggested!
     xys = [{'x':i, 'y':j} for i,j in zip(velocities, torques)] 
-    string_dict = {'xydata': xys, 'Power': power*1e-3, 'Modelname': 'sim'}
+    string_dict = {'xydata': xys, 'Power': power*1e-3, 'Modelname': name}
     return string_dict
 
 if __name__ == "__main__":
