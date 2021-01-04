@@ -14,6 +14,10 @@ Gradient: 0.0175 s
 
 ## Running GUI
 The GUI is now ready-ish for testing!
-run it by invoking:
+run it by invoking
+```
 $ python flaskpage.py
-then point your browser to 127.0.0.1:5000, fill in the boxes and click run to see your result.
+```
+Then point your browser to 127.0.0.1:5000, fill in the boxes and click run to see your result.
+Please post any bugs/issues you find as comments to this repo :)
+
