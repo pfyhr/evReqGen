@@ -1,0 +1,16 @@
+body {
+    margin-left: 10px;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+h1 {
+    margin-top: 20px;
+    padding: 25px;
+    position: relative;
+}
+
+.chart-container {
+    position: relative;
+    width: 50vw;
+    margin: auto;
+}

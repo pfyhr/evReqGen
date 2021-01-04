@@ -1,7 +1,9 @@
-
 import sympy as sym
 from sympy.solvers.solveset import linsolve
 import numpy as np
+import matplotlib.pyplot as plt
+#import pandas as pd
+import csv
 
 import time
 
@@ -59,18 +61,16 @@ def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheel
     if v1 > vmax:
         v1 = vmax
 
-    # initial value
-    acceleration = 0.
-
-    # call wheelforcemax
-    wheelForceMax = tractionMax(
-        mass, g, wtRearFrac, wheelbase, cgh, driveWheel, muTire)
-
-    wheelTorqueMax = wheelForceMax * wheelRadius
+    #call tractionForceMax
+    wheelForceMax  = tractionMax(mass, g, wtRearFrac, wheelbase, cgh, driveWheel, muTire)
+    #wheelTorqueMax = wheelForceMax * wheelRadius
 
     # start search for optimal wheeltorque curve given constraints.
-    # initialize power and time with some high values
-    #prevpower = 2.5e3
+    # initialize power and time with some gues values, maybe
+    # here the guess should be based on one run...
+    # the while loop below should be broken out into a function.
+    # that removes the optimizing bit and just runs "a vehicle" with
+    # whatever power is chosen.
     power = 5e3
     simAccTime = 1e2
     timeTol = 0.01
@@ -98,7 +98,7 @@ def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheel
 
         while vCur < v1:
             if vCur > 0:
-                wheelForce = min(wheelForceMax, power/vCur)
+                wheelForce = np.minimum(wheelForceMax, power/vCur)
             else:
                 wheelForce = wheelForceMax
 
@@ -125,9 +125,38 @@ def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheel
         if power > 2e6:
             print('Reqd power > 2 MW, its not gonna happen')
             break
-
+    
     return torques, velocities, power
 
+def plot_png(xs, ys):
+    setdpi=600
+    plt.plot(xs, ys, label=f'{power/1e3:.0f} kW')
+    plt.xlabel('Velocity [m/s]')
+    plt.ylabel('Torque [Nm]')
+    plt.legend(loc='best')
+    plt.ylim(bottom=0)
+    plt.savefig('static/images/torque.png', dpi=setdpi)
+    return 'plotting done, see disk'
+
+def output_csv(torques, velocities, power):
+    with open(f'static/csv/torques{power/1e3:.0f}kW.csv', 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile, delimiter=',', \
+            quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        writer.writerow(['velocity[m/s], torque[Nm]'])
+        for i, val in enumerate(torques):
+            writer.writerow([velocities[i], torques[i]])
+    return 'done printing csv'
+
+def sim_json(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel,
+                                                   desiredAccTime, muTire, wheelRadius):
+    #run the simulation
+    torques, velocities, power = accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel,
+                                                   desiredAccTime, muTire, wheelRadius)
+
+    #make a dict of it, as naji suggested!
+    xys = [{'x':i, 'y':j} for i,j in zip(velocities, torques)] 
+    string_dict = {'xydata': xys, 'Power': power*1e-3, 'Modelname': 'sim'}
+    return string_dict
 
 if __name__ == "__main__":
     mass = 1800.
@@ -145,7 +174,9 @@ if __name__ == "__main__":
     wheelRadius = 0.3
 
     start_time = time.time()
-    torques, velocities, power = accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel,
-                                                   desiredAccTime, muTire, wheelRadius)
+    json = sim_json(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel, \
+                                                  desiredAccTime, muTire, wheelRadius)
     dt = (time.time()-start_time)
-    print("Solution found {:.3f} kW in {:.3f} s".format(power*1e-3, dt))
+    
+    print("Solution found {:.3f} kW in {:.3f} s".format(json['Power'], dt))
+    #print(json)
