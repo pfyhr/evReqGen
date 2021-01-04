@@ -178,5 +178,5 @@ if __name__ == "__main__":
                                                   desiredAccTime, muTire, wheelRadius)
     dt = (time.time()-start_time)
     
-    print("Solution found {:.3f} kW in {:.3f} s".format(json['Power']*1e-3, dt))
+    print("Solution found {:.3f} kW in {:.3f} s".format(json['Power'], dt))
     #print(json)

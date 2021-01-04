@@ -68,7 +68,7 @@ async function getJSON(csvstring) {
 
 //make a json for one car, passed as function input
 async function makecarstruct(car) {
-    var cardata = await getJSON(car);
+    var cardata = car; // await getJSON(car);
     var carstruct = {
         label: cardata.Modelname,
         type: 'line',
@@ -164,61 +164,79 @@ document.getElementById('addData').addEventListener('click', async function() {
 });
 
 //this tries to take the returned simfile and push it to the chart
-// document.getElementById('submitData').addEventListener('click', async function() {
-//     //event.preventDefault();
-//     var datafromsim = await simdata();
-//     var simstruct = await makecarstruct( datafromsim );
-//     vehicledatas.datasets.push(simstruct);
-//     console.log(simstruct)
-//     window.theplot.update();
-// });
-
-const formElem = document.querySelector('form');
-const formData = new FormData(document.querySelector('form'))
-formElem.addEventListener('submitData', (e) => {
-    // on form submission, prevent default
-    
-    e.preventDefault();
-    
-    // construct a FormData object, which fires the formdata event
-    new FormData(formElem);
-});
-
-formElem.onformdata = (e) => {
-
-    console.log('formdata fired');
-    
-    // Get the form data from the event object
-    let data = e.formData;
-    for (var value of data.values()) {
-    console.log(value); 
-}
-// look here: https://justindonato.com/notebook/template-or-json-decorator-for-flask.html
-// and https://gist.github.com/KentaYamada/2eed4af1f6b2adac5cc7c9063acf8720
-// and https://stackoverflow.com/questions/30686112/efficient-way-of-handling-xhr-request-in-python-flask
-// submit the data via XHR
-var request = new XMLHttpRequest();
-request.open("POST", "/runsim");
-request.send(data);
+async function addsimresult(simresult) {
+    console.log(simresult)
+    var simstruct = await makecarstruct(simresult);
+    vehicledatas.datasets.push(simstruct);
+    //console.log(simstruct)
+    window.theplot.update();
 };
 
-    // //const body = Cd; // whatever you want to send in the body of the HTTP request
-    // console.log(body)
-    // const headers = {"Content-type": "application/x-www-form-urlencoded"}; // if you're sending JSON to the server
-    // const method = 'POST';
-    // const response = await fetch(url, formData); //{ method, body, headers }
-    // const data = await response.json(); // or response.json() if your server returns JSON
-    // console.log(data);
-//}
+// old attempt here...
+
+//async function postform() {
+var formElem = document.querySelector('form');
+var frontArea = {frontArea: 5}; //document.querySelector('frontArea');
+// console.log(formElem)
+
+formElem.addEventListener('submit', (e) => {
+  // on form submission, prevent default
+  e.preventDefault();
+
+  // construct a FormData object, which fires the formdata event
+  new FormData(formElem);
+})
+
+formElem.addEventListener('formdata', (e) => {
+  console.log('formdata fired');
+
+  // Get the form data from the event object
+  let data = e.formData;
+//   for (var value of data.values()) {
+//     console.log(value);
+//   }
+
+  // submit the data via XHR
+//   let request = new XMLHttpRequest();
+//   request.open("POST", "/runsim");
+//   request.send(data);
+  
+//try to submit via fetch instead...
+    fetch('/runsim', {
+        method: 'POST',
+        body: data
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log('Success:', result);
+        //add the data to the plot window
+        addsimresult(result);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
 
 
+// save this for the postform
+// await fetch('/runsim', {
+//   method: 'POST', // or 'PUT'
+//    headers: {
+//      'Content-Type': 'application/json',
+//     },
+//   body: JSON.stringify(data),
+//  })
+// .then(response => response.json())
+// .then(data => {
+//   console.log('Success:', data);
+// })
+// .catch((error) => {
+//   console.error('Error:', error);
+// });
 
-// fetch('/runsim')
-//     .then(function (response) {
-//         console.log(respose);
-//         return response.text();
-//     }).then(function (text) {
-//         console.log('GET response text:');
-//         console.log(text);
-//     });
+// }; //postform ends here
+
+//new attempt here
+
+
 
