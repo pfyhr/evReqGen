@@ -37,7 +37,7 @@ def sim():
             
             #print(power/1e3)
             #message = dragraceSim.plot_png(velocities, torques)
-            print(simfile)
+            #print(simfile)
             #response = make_response(render_template('index.html'))
             #response.headers['simdata'] = jsonify(simfile)
             return simfile

@@ -177,25 +177,30 @@ const formElem = document.querySelector('form');
 const formData = new FormData(document.querySelector('form'))
 formElem.addEventListener('submitData', (e) => {
     // on form submission, prevent default
+    
     e.preventDefault();
     
     // construct a FormData object, which fires the formdata event
     new FormData(formElem);
 });
+
 formElem.onformdata = (e) => {
+
     console.log('formdata fired');
     
     // Get the form data from the event object
     let data = e.formData;
     for (var value of data.values()) {
-        console.log(value); 
-    }
-    
-    // submit the data via XHR
-    var request = new XMLHttpRequest();
-    request.open("POST", "/runsim");
-    request.send(data);
-    };
+    console.log(value); 
+}
+// look here: https://justindonato.com/notebook/template-or-json-decorator-for-flask.html
+// and https://gist.github.com/KentaYamada/2eed4af1f6b2adac5cc7c9063acf8720
+// and https://stackoverflow.com/questions/30686112/efficient-way-of-handling-xhr-request-in-python-flask
+// submit the data via XHR
+var request = new XMLHttpRequest();
+request.open("POST", "/runsim");
+request.send(data);
+};
 
     // //const body = Cd; // whatever you want to send in the body of the HTTP request
     // console.log(body)
