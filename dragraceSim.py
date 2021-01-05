@@ -24,8 +24,10 @@ def tractionMax(mass, g, wtRearFrac, wheelbase, cgh, driveWheel, muTire):
     Fa = sym.Symbol('Fa')
 
     if driveWheel == 'AWD':
+        print('AWD')
         wheelForceMax = mass*g*muTire
     elif driveWheel == 'FWD':
+        print('FWD')
         eq1 = Fr + Ff - mass*g
         eq2 = Fr*(1-wtRearFrac)*wheelbase - Ff*wtRearFrac*wheelbase - Fa*cgh
         eq3 = Fa - Ff*muTire
@@ -33,7 +35,7 @@ def tractionMax(mass, g, wtRearFrac, wheelbase, cgh, driveWheel, muTire):
         X = linsolve([eq1, eq2, eq3], (Fr, Ff, Fa))
         # extract the solution for eq3
         wheelForceMax = X.args[0][2]
-    else:
+    else: #RWD case
 
         eq1 = Fr + Ff - mass*g
         eq2 = Fr*(1-wtRearFrac)*wheelbase - Ff*wtRearFrac*wheelbase - Fa*cgh
@@ -125,8 +127,12 @@ def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheel
         if power > 2e6:
             print('Reqd power > 2 MW, its not gonna happen')
             break
-    
-    return torques, velocities, power
+            #acceleration limited by friction
+    if power/v1 > wheelForceMax:
+        mission_pass = False
+    else:
+        mission_pass = True
+    return torques, velocities, power, mission_pass
 
 def plot_png(xs, ys):
     setdpi=600
@@ -150,12 +156,12 @@ def output_csv(torques, velocities, power):
 def sim_json(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel,
                                                    desiredAccTime, muTire, wheelRadius, name):
     #run the simulation
-    torques, velocities, power = accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel,
+    torques, velocities, power, mission_pass = accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel,
                                                    desiredAccTime, muTire, wheelRadius)
 
     #make a dict of it, as naji suggested!
     xys = [{'x':i, 'y':j} for i,j in zip(velocities, torques)] 
-    string_dict = {'xydata': xys, 'Power': power*1e-3, 'Modelname': name}
+    string_dict = {'xydata': xys, 'Power': power*1e-3, 'Modelname': name, 'SolutionFound': mission_pass}
     return string_dict
 
 if __name__ == "__main__":
@@ -172,10 +178,11 @@ if __name__ == "__main__":
     desiredAccTime = 9.
     muTire = 0.9
     wheelRadius = 0.3
+    name = 'mainsim'
 
     start_time = time.time()
     json = sim_json(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel, \
-                                                  desiredAccTime, muTire, wheelRadius)
+                                                  desiredAccTime, muTire, wheelRadius, name)
     dt = (time.time()-start_time)
     
     print("Solution found {:.3f} kW in {:.3f} s".format(json['Power'], dt))
