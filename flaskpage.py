@@ -1,4 +1,3 @@
-from os import name
 from flask import Flask, render_template, url_for, request, jsonify, make_response
 import dragraceSim
 
