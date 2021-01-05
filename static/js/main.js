@@ -1,25 +1,14 @@
 // the javascript file that makes plots, gets data and so on.
 
-
-// let xhr = new XMLHttpRequest();
-// xhr.open('GET', '/simdata');
-// xhr.responseType = 'json';
-// xhr.send();
-// xhr.onload = function() {
-//     let responseObj = xhr.response;
-//     console.log(responseObj.message)
-//     //SpeechRecognitionAlternative(responseObj.message);
-// };
-
-
 //get data from jsonfiles
+//this seems to only work on *nix at the moment.
 const leaf_real = './static/json/leafRealData.json';
-const i3_real = './static/json/i3RealData.json';
-const egolf_sim = '.static/json/egolfSimData.json';
+const i3_real = './static/json//i3RealData.json';
+const egolf_sim = './static/json//egolfSimData.json';
 const model3_sim = './static/json/model3SimData.json';
-//cars
 
 //some colorconfig from chart.js
+//Want to make a color-rotating function soon to make the plots look nicer.
 var color = Chart.helpers.color;
 
 window.chartColors = {
@@ -80,8 +69,8 @@ async function makecarstruct(car) {
 
 //create a vehicle dataset, containing two vehicles
 async function makevehicledata() {
-    var leaf = await makecarstruct(leaf_real);
-    var egolf = await makecarstruct(i3_real);
+    var leaf = await makecarstruct(getJSON(leaf_real));
+    var egolf = await makecarstruct(getJSON(i3_real));
     //put the vehicle data in a struct that config understands
     var vehicledatas = {
         datasets: [
@@ -145,11 +134,8 @@ window.onload = async function() {
 
 //this pops the last added data from the chart        
 document.getElementById('removeData').addEventListener('click', function() {
-    //console.log(vehicledatas.datasets.length)
     var element = vehicledatas.datasets.pop();
-    //console.log(element)
-    //var leafxy = getJSON('./static/json/leafRealData.json');
-    //console.log(leafxy.xydata)
+    //console.log(element) //if you want to look at what you popped
     window.theplot.update();
 }); 
 
@@ -158,8 +144,6 @@ document.getElementById('addData').addEventListener('click', async function() {
     var newstruct = await makecarstruct(model3_sim);
     vehicledatas.datasets.push(newstruct);
     console.log(newstruct)
-    //var leafxy = getJSON('./static/json/leafRealData.json');
-    //console.log(leafxy.xydata)
     window.theplot.update();
 });
 
@@ -172,36 +156,23 @@ async function addsimresult(simresult) {
     window.theplot.update();
 };
 
-// old attempt here...
-
-//async function postform() {
+// This selects "a form any form" on the page. which is not great. 
+// These are from the very great MDN page
 var formElem = document.querySelector('form');
-var frontArea = {frontArea: 5}; //document.querySelector('frontArea');
 // console.log(formElem)
 
 formElem.addEventListener('submit', (e) => {
-  // on form submission, prevent default
-  e.preventDefault();
+    // on form submission, prevent default
+    e.preventDefault();
 
-  // construct a FormData object, which fires the formdata event
-  new FormData(formElem);
+    // construct a FormData object, which fires the formdata event
+    new FormData(formElem);
 })
 
 formElem.addEventListener('formdata', (e) => {
-  console.log('formdata fired');
-
-  // Get the form data from the event object
-  let data = e.formData;
-//   for (var value of data.values()) {
-//     console.log(value);
-//   }
-
-  // submit the data via XHR
-//   let request = new XMLHttpRequest();
-//   request.open("POST", "/runsim");
-//   request.send(data);
-  
-//try to submit via fetch instead...
+    // Get the form data from the event object
+    let data = e.formData;
+    //try to submit via fetch, which seems to work better than xhttpreq :) 
     fetch('/runsim', {
         method: 'POST',
         body: data
@@ -216,27 +187,5 @@ formElem.addEventListener('formdata', (e) => {
         console.error('Error:', error);
     });
 });
-
-
-// save this for the postform
-// await fetch('/runsim', {
-//   method: 'POST', // or 'PUT'
-//    headers: {
-//      'Content-Type': 'application/json',
-//     },
-//   body: JSON.stringify(data),
-//  })
-// .then(response => response.json())
-// .then(data => {
-//   console.log('Success:', data);
-// })
-// .catch((error) => {
-//   console.error('Error:', error);
-// });
-
-// }; //postform ends here
-
-//new attempt here
-
 
 
