@@ -7,26 +7,20 @@ const i3_real = './static/json//i3RealData.json';
 const egolf_sim = './static/json//egolfSimData.json';
 const model3_sim = './static/json/model3SimData.json';
 
-//some colorconfig from chart.js
 //Want to make a color-rotating function soon to make the plots look nicer.
-
 // shamelessly stole a color from: https://nagix.github.io/chartjs-plugin-colorschemes/
 const Paired12 = ['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a', '#ffff99', '#b15928'];
 
 var currentColorIndex = 0;
-const colorIndexLength = 12;
+const colorIndexLength = Paired12.length;
 
 function getColor() {
     var color = Paired12[currentColorIndex]; 
-    console.log(color)
     if (currentColorIndex >= colorIndexLength) {
-        console.log('inside if')
         currentColorIndex = 0;
         }
     else {
-        console.log('inside else')
         currentColorIndex = currentColorIndex+1;
-        console.log(currentColorIndex)
         }
     return color;
 }
@@ -98,11 +92,6 @@ async function makeconfig() {
         type: 'scatter',
         data: vehicledatas,
         options: {
-            // plugins: {
-            //     colorschemes: {
-            //         scheme: 'tableau.Winter10'
-            //     }
-            // },
             title: {
                 display: true,
                 text: 'Wheel torque data'
