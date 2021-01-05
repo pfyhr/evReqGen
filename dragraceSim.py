@@ -162,7 +162,7 @@ def sim_json(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, dri
     # make a zip of it, iterate over things in the zip and stuff them into a dict.
     # the [::10] returns only each 10th value, to save the Chart.JS some effort and make
     # the plot animations a bit smoother.
-    xys = [{'x':i, 'y':j} for i,j in zip(velocities[::10], torques[::10])] 
+    xys = [{'x':i, 'y':j} for i,j in zip(velocities[::20], torques[::20])] 
     string_dict = {'xydata': xys, 'Power': power*1e-3, 'Modelname': name, 'SolutionFound': mission_pass}
     return string_dict
 
