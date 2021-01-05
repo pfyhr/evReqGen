@@ -31,5 +31,5 @@ Gradient: 0.0175 s
 See if you can beat that on an average of 10 runs Simon.
 
 ## Known issues
-Colors don't change in the plots, pullreq's welcome.
+~~Colors don't change in the plots, pullreq's welcome.~~
 JSON reference files don't load from disk on Windows.
