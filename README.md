@@ -1,6 +1,6 @@
-# dragraceSim
+# Demo:
 
-![An accelerating Tesla Model 3](./static/images/dragraceTesla.png)
+![GUI demo](./static/images/dragracesimdemo.gif)
 
 A simulator to find desired wheeltorque curves for vehicles
 
@@ -31,5 +31,6 @@ Gradient: 0.0175 s
 See if you can beat that on an average of 10 runs Simon.
 
 ## Known issues
-~~Colors don't change in the plots, pullreq's welcome.~~
-JSON reference files don't load from disk on Windows.
+~~JSON reference files don't load from disk on Windows.~~
+Reference files removed for now due to datastructure changes.
+Need to generate some new ones, happy to accept some if you have any cool ones!
