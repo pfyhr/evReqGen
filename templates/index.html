@@ -2,21 +2,22 @@
 
 {%block head %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" defer></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-colorschemes"></script> -->
     <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
 {% endblock %}
 
 
 {% block body%}
 
-<h1> A torque curve </h1>
+<h1> EV dragrace simulator </h1>
 
-<button id="addData">Add Data</button>
-<button id="removeData">Remove Data</button>
 
 <!-- down here is my tiny chart...-->
 <div class="chart-container">
-    <canvas id="plot", width="600" height="400"></canvas>
+    <canvas id="speedtorque", width="600" height="400"></canvas>
+</div>
+
+<div class="chart-container">
+    <canvas id="timespeed", width="600" height="400"></canvas>
 </div>
 
 <form id="siminput">
@@ -95,6 +96,7 @@
     <input type="submit" value="run simulation">
 </form>
 
+<button id="removeData">Remove Data</button>
 <!-- <button onclick="postform()">Run Simulation</button> -->
 <!-- <script>
     var simdata = {{simfile}}

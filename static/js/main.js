@@ -60,41 +60,37 @@ async function getJSON(csvstring) {
 };
 
 //make a json for one car, passed as function input
-async function makecarstruct(car) {
-    var cardata = car; // await getJSON(car);
+async function makecarstruct(cardata, title, color) {
+    console.log('is it true', (title=='Wheel torque'))
     var carstruct = {
         label: cardata.Modelname,
         type: 'line',
-        borderColor: getColor(),
-        data: cardata.xydata
+        borderColor: color,
+        data: (title=='Wheel torque') ? cardata.torquespeed : cardata.timespeed
     };
     return carstruct
 };
 
 //create a vehicle dataset, containing two vehicles
-async function makevehicledata() {
-    var leaf = await makecarstruct(getJSON(leaf_real));
-    var egolf = await makecarstruct(getJSON(i3_real));
+async function makevehicledata(title) {
+    var leaf = await makecarstruct( await getJSON(leaf_real), title);
+    //var egolf = await makecarstruct(getJSON(i3_real));
     //put the vehicle data in a struct that config understands
     var vehicledatas = {
-        datasets: [
-            leaf,
-            egolf
-        ]
+        datasets: []
     };
     return vehicledatas
 };
 
 //make the config json for the vehicle data above
-async function makeconfig() {
-    vehicledatas = await makevehicledata();
+async function makeconfig(title, xlabel, ylabel, dataname) {
     var config = {
         type: 'scatter',
-        data: vehicledatas,
+        data: dataname,
         options: {
             title: {
                 display: true,
-                text: 'Wheel torque data'
+                text: title 
             },
             scales: {
                  xAxes: [{
@@ -102,7 +98,7 @@ async function makeconfig() {
                     display: true,
                     scaleLabel: {
                         display: true,
-                        labelString: 'Velocity [m/s]'
+                        labelString: xlabel 
                     },
                     ticks: {
                         major: {
@@ -118,7 +114,7 @@ async function makeconfig() {
                     display: true,
                     scaleLabel: {
                         display: true,
-                        labelString: 'Torque [Nm]'
+                        labelString: ylabel 
                     }
                 }]
             }
@@ -127,36 +123,49 @@ async function makeconfig() {
         return config;
     };
 
-//finally create the chart, using the generated config
+//create speedtorque chart
 window.onload = async function() {
-    var config = await makeconfig();
+    torque = await makevehicledata('Wheel torque');
+    var config = await makeconfig('Wheel torque', 'Speed [m/s]', 'Torque [Nm]', torque);
     console.log(config)
-    var ctx = document.getElementById('plot').getContext('2d');
-    window.theplot = new Chart(ctx, config);
+    var ctx = document.getElementById('speedtorque').getContext('2d');
+    window.torquespeed = new Chart(ctx, config);
+    //chart2
+    speed = await makevehicledata('Vehicle speed');
+    var config2 = await makeconfig('Vehicle speed', 'Time [s]', 'Speed [m/s]', speed);
+    console.log(config2)
+    var ctx2 = document.getElementById('timespeed').getContext('2d');
+    window.timespeed = new Chart(ctx2, config2);
 };
 
 //this pops the last added data from the chart        
 document.getElementById('removeData').addEventListener('click', function() {
-    var element = vehicledatas.datasets.pop();
+    torque.datasets.pop();
+    speed.datasets.pop();
     //console.log(element) //if you want to look at what you popped
-    window.theplot.update();
+    torquespeed.update();
+    timespeed.update();
 }); 
 
 //this adds a predetermined data at the moment
-document.getElementById('addData').addEventListener('click', async function() {
-    var newstruct = await makecarstruct(model3_sim);
-    vehicledatas.datasets.push(newstruct);
-    console.log(newstruct)
-    window.theplot.update();
-});
+// document.getElementById('addData').addEventListener('click', async function() {
+//     var newstruct = await makecarstruct(model3_sim);
+//     vehicledatas.datasets.push(newstruct);
+//     console.log(newstruct)
+//     window.theplot.update();
+// });
 
 //this tries to take the returned simfile and push it to the chart
 async function addsimresult(simresult) {
     console.log(simresult)
-    var simstruct = await makecarstruct(simresult);
-    vehicledatas.datasets.push(simstruct);
+    color =  getColor();
+    var torquestruct = await makecarstruct(simresult, 'Wheel torque', color);
+    torque.datasets.push(torquestruct);
+    var speedstruct = await makecarstruct(simresult, 'Vehicle speed', color);
+    speed.datasets.push(speedstruct);
     //console.log(simstruct)
-    window.theplot.update();
+    torquespeed.update();
+    timespeed.update();
 };
 
 // This selects "a form any form" on the page. which is not great. 
