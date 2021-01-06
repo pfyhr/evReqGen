@@ -1,6 +1,6 @@
 # Demo:
 
-![GUI demo](./static/images/dragracesimdemo.gif)
+![GUI demo](./static/images/dragracesimdemo.gif){:height="65%" width="65%"}
 
 A simulator to find desired wheeltorque curves for vehicles
 
