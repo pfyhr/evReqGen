@@ -80,7 +80,7 @@ def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheel
 
     while abs(simAccTime - desiredAccTime) > timeTol:
         # initialize temporary variables
-        iterStep = 1
+        iterStep = 1 
         vCur = v0
         pCar = 0.  #position!
 
@@ -95,8 +95,9 @@ def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheel
         power = prevpower + (prevpower * timeratio)
 
         print('power=', power*1e-3)
-        velocities = []
-        torques = []
+        times       = []
+        velocities  = []
+        torques     = []
 
         while vCur < v1:
             if vCur > 0:
@@ -114,7 +115,9 @@ def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheel
 
             fDiff = min(loadDiff*transLoss, wheelForceMax)
             acceleration = fDiff / mass
+            tCur = iterStep * timeStep
             vCur = vCur + acceleration*timeStep
+            times.append(tCur)
             velocities.append(vCur)
             torques.append(wheelForce*wheelRadius)
             pCar = pCar + vCur * timeStep
@@ -132,7 +135,7 @@ def accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheel
         mission_pass = False
     else:
         mission_pass = True
-    return torques, velocities, power, mission_pass
+    return times, torques, velocities, power, mission_pass
 
 def plot_png(xs, ys):
     setdpi=600
@@ -156,14 +159,18 @@ def output_csv(torques, velocities, power):
 def sim_json(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel,
                                                    desiredAccTime, muTire, wheelRadius, name):
     #run the simulation
-    torques, velocities, power, mission_pass = accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel,
+    times, torques, velocities, power, mission_pass = accelerateVehicle(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, driveWheel,
                                                    desiredAccTime, muTire, wheelRadius)
 
     # make a zip of it, iterate over things in the zip and stuff them into a dict.
     # the [::10] returns only each 10th value, to save the Chart.JS some effort and make
     # the plot animations a bit smoother.
-    xys = [{'x':i, 'y':j} for i,j in zip(velocities[::20], torques[::20])] 
-    string_dict = {'xydata': xys, 'Power': power*1e-3, 'Modelname': name, 'SolutionFound': mission_pass}
+    outslice = 20
+    torquespeed = [{'x':i, 'y':j} for i,j in zip(velocities[::outslice], torques[::outslice])] 
+    timespeed = [{'x':i, 'y':j} for i,j in zip(times[::outslice], velocities[::outslice])]
+
+    string_dict = {'Modelname': name, 'Power': power*1e-3, 'SolutionFound': mission_pass, \
+         'torquespeed': torquespeed, 'timespeed': timespeed}
     return string_dict
 
 if __name__ == "__main__":
