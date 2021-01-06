@@ -1,5 +1,3 @@
-# dragraceSim
-
 ![GUI demo](./static/images/dragracesimdemo.gif)
 
 A simulator to find desired wheeltorque curves for vehicles
