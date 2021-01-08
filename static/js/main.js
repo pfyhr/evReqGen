@@ -66,7 +66,7 @@ async function makecarstruct(cardata, title, color) {
         label: cardata.Modelname,
         type: 'line',
         borderColor: color,
-        data: (title=='Wheel torque') ? cardata.torquespeed : cardata.timespeed
+        data: (title=='Wheel torque') ? cardata.torquespeed : cardata.timespeed // funky one-line if JavaScript! :)
     };
     return carstruct
 };
@@ -146,14 +146,6 @@ document.getElementById('removeData').addEventListener('click', function() {
     torquespeed.update();
     timespeed.update();
 }); 
-
-//this adds a predetermined data at the moment
-// document.getElementById('addData').addEventListener('click', async function() {
-//     var newstruct = await makecarstruct(model3_sim);
-//     vehicledatas.datasets.push(newstruct);
-//     console.log(newstruct)
-//     window.theplot.update();
-// });
 
 //this tries to take the returned simfile and push it to the chart
 async function addsimresult(simresult) {
