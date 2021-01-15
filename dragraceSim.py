@@ -166,8 +166,14 @@ def sim_json(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, dri
     # the [::10] returns only each 10th value, to save the Chart.JS some effort and make
     # the plot animations a bit smoother.
     outslice = 20
-    torquespeed = [{'x':i, 'y':j} for i,j in zip(velocities[::outslice], torques[::outslice])] 
-    timespeed = [{'x':i, 'y':j} for i,j in zip(times[::outslice], velocities[::outslice])]
+    vel = velocities[::outslice]
+    vel.append(velocities[-1])
+    tq  = torques[::outslice]
+    tq.append(torques[-1]) 
+    time = times[::outslice]
+    time.append(times[-1])
+    torquespeed = [{'x':i, 'y':j} for i,j in zip(vel, tq)] 
+    timespeed = [{'x':i, 'y':j} for i,j in zip(time, vel)]
 
     string_dict = {'Modelname': name, 'Power': power*1e-3, 'SolutionFound': mission_pass, \
          'torquespeed': torquespeed, 'timespeed': timespeed}

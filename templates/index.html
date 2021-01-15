@@ -69,11 +69,16 @@
         size="6" 
         placeholder="2.5" >
 
-    <label for="driveWheel">Driven wheels [FWD/RWD/AWD]: </label>
-        <input type="text" id="driveWheel" name="driveWheel" required
+    <label for="driveWheel">Driven wheels: </label>
+    <select id="driveWheel" name="driveWheel">
+        <option value="RWD">RWD</option>
+        <option value="FWD">FWD</option>
+        <option value="AWD">AWD</option>
+    </select>    
+    <!-- <input type="text" id="driveWheel" name="driveWheel" required
         size="6" 
-        placeholder="RWD" >
-
+        placeholder="RWD" > -->
+        
     <label for="desiredAccTime">Desired acc time [s]: </label>
         <input type="text" id="desiredAccTime" name="desiredAccTime" required
         size="6" 
