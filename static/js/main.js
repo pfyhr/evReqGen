@@ -66,7 +66,7 @@ async function makecarstruct(cardata, title, color) {
         label: cardata.Modelname,
         type: 'line',
         borderColor: color,
-        data: (title=='Wheel torque') ? cardata.torquespeed : cardata.timespeed // funky one-line if JavaScript! :)
+        data: (title=='Wheel torque') ? cardata.torquespeed : (title=='Wheel power') ? cardata.powerspeed : cardata.timespeed 
     };
     return carstruct
 };
@@ -136,15 +136,23 @@ window.onload = async function() {
     console.log(config2)
     var ctx2 = document.getElementById('timespeed').getContext('2d');
     window.timespeed = new Chart(ctx2, config2);
+    //chart3
+    power = await makevehicledata('Wheel power');
+    var config3 = await makeconfig('Wheel power', 'Speed [m/s]', 'Power [kW]', power);
+    console.log(config3)
+    var ctx3 = document.getElementById('speedpower').getContext('2d');
+    window.powerspeed = new Chart(ctx3, config3);
 };
 
 //this pops the last added data from the chart        
 document.getElementById('removeData').addEventListener('click', function() {
     torque.datasets.pop();
     speed.datasets.pop();
+    power.datasets.pop();
     //console.log(element) //if you want to look at what you popped
     torquespeed.update();
     timespeed.update();
+    powerspeed.update();
 }); 
 
 //this tries to take the returned simfile and push it to the chart
@@ -155,9 +163,11 @@ async function addsimresult(simresult) {
     torque.datasets.push(torquestruct);
     var speedstruct = await makecarstruct(simresult, 'Vehicle speed', color);
     speed.datasets.push(speedstruct);
+    var powerstruct = await makecarstruct(simresult, 'Wheel power', color)
     //console.log(simstruct)
     torquespeed.update();
     timespeed.update();
+    powerspeed.update();
 };
 
 // This selects "a form any form" on the page. which is not great. 
