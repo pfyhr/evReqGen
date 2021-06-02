@@ -173,7 +173,7 @@ def sim_json(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, dri
     time = times[::outslice]
     time.append(times[-1])
     #add a power struct
-    pwr = np.array(vel)*np.array(tq)
+    pwr = (np.array(vel)*np.array(tq)/wheelRadius)/1e3
     pwr = pwr.tolist()
     torquespeed = [{'x':i, 'y':j} for i,j in zip(vel, tq)] 
     timespeed = [{'x':i, 'y':j} for i,j in zip(time, vel)]

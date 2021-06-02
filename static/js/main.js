@@ -165,7 +165,8 @@ async function addsimresult(simresult) {
     torque.datasets.push(torquestruct);
     var speedstruct = await makecarstruct(simresult, 'Vehicle speed', color);
     speed.datasets.push(speedstruct);
-    var powerstruct = await makecarstruct(simresult, 'Wheel power', color)
+    var powerstruct = await makecarstruct(simresult, 'Wheel power', color);
+    power.datasets.push(powerstruct);
     //console.log(simstruct)
     torquespeed.update();
     timespeed.update();
