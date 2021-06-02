@@ -61,13 +61,15 @@ async function getJSON(csvstring) {
 
 //make a json for one car, passed as function input
 async function makecarstruct(cardata, title, color) {
-    console.log('is it true', (title=='Wheel torque'))
+    console.log('is wheeltq true', (title=='Wheel torque'))
+    console.log('is wheelpwr true', (title=='Wheel power'))
     var carstruct = {
         label: cardata.Modelname,
         type: 'line',
         borderColor: color,
         data: (title=='Wheel torque') ? cardata.torquespeed : (title=='Wheel power') ? cardata.powerspeed : cardata.timespeed 
     };
+    console.log('data is', carstruct.data)
     return carstruct
 };
 
