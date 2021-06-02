@@ -172,11 +172,15 @@ def sim_json(Cd, frontArea, mass, grade, v0, v1, cgh, wtRearFrac, wheelbase, dri
     tq.append(torques[-1]) 
     time = times[::outslice]
     time.append(times[-1])
+    #add a power struct
+    pwr = (np.array(vel)*np.array(tq)/wheelRadius)/1e3
+    pwr = pwr.tolist()
     torquespeed = [{'x':i, 'y':j} for i,j in zip(vel, tq)] 
     timespeed = [{'x':i, 'y':j} for i,j in zip(time, vel)]
+    powerspeed = [{'x':i, 'y':j} for i,j in zip(vel,pwr)]
 
     string_dict = {'Modelname': name, 'Power': power*1e-3, 'SolutionFound': mission_pass, \
-         'torquespeed': torquespeed, 'timespeed': timespeed}
+         'torquespeed': torquespeed, 'timespeed': timespeed, 'powerspeed': powerspeed}
     return string_dict
 
 if __name__ == "__main__":
