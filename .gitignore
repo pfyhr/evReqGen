@@ -1,3 +1,16 @@
 __pycache__/
 referenceegolf.json
 .vscode
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+*.cover
+*.py,cover
+
+# Virtual environments
+venv/
+env/
+ENV/
