@@ -1,12 +1,17 @@
-{% extends 'base.html' %}
-
-{%block head %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>EV dragrace simulator</title>
+    <link rel="stylesheet" href="static/css/main.css" />
+    <link rel="icon" href="data:,">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" defer></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
-{% endblock %}
-
-
-{% block body%}
+    <script src="static/js/sim.js" defer></script>
+    <script src="static/js/main.js" defer></script>
+</head>
+<body>
 
 <h1> EV dragrace simulator </h1>
 
@@ -106,9 +111,6 @@
 </form>
 
 <button id="removeData">Remove Data</button>
-<!-- <button onclick="postform()">Run Simulation</button> -->
-<!-- <script>
-    var simdata = {{simfile}}
-</script> -->
 
-{% endblock %}
+</body>
+</html>

@@ -189,20 +189,20 @@ formElem.addEventListener('submit', (e) => {
 formElem.addEventListener('formdata', (e) => {
     // Get the form data from the event object
     let data = e.formData;
-    //try to submit via fetch, which seems to work better than xhttpreq :) 
-    fetch('/runsim', {
-        method: 'POST',
-        body: data
-    })
-    .then(response => response.json())
-    .then(result => {
+    const num = (key) => parseFloat(data.get(key));
+    //run the simulation in the browser (see sim.js), so the page works as a static site
+    try {
+        const result = simJson(num('Cd'), num('frontArea'), num('mass'), num('grade'),
+            num('v0'), num('v1'), num('cgh'), num('wtRearFrac'), num('wheelbase'),
+            data.get('driveWheel'), num('desiredAccTime'), num('muTire'), num('wheelRadius'),
+            data.get('Name'));
         console.log('Success:', result);
         //add the data to the plot window
         addsimresult(result);
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Error:', error);
-    });
+        alert('Simulation failed: ' + error.message);
+    }
 });
 
 
