@@ -2,20 +2,35 @@
 
 A simulator to find desired wheeltorque curves for vehicles
 
-## Running GUI
-The GUI is now ready-ish for testing!
-run it by invoking
+## Try it online
+The simulator runs entirely in your browser and is hosted on GitHub Pages:
+
+**https://pfyhr.github.io/evReqGen/**
+
+Fill in the boxes and click run to see your result. Please post any bugs/issues you find as comments to this repo :)
+
+## Running locally
+The page is a static site (`index.html` + `static/`), so any web server will do:
 ```
-$ python flaskpage.py
+$ python -m http.server
 ```
-Then point your browser to 127.0.0.1:5000, fill in the boxes and click run to see your result.
-It requires many libraries, mainly on the Python side, if you get some errors try:
+Then point your browser to 127.0.0.1:8000.
+
+The browser version of the simulation lives in `static/js/sim.js` and is a port of
+`dragraceSim.py`, so keep the two in sync if you change the model.
+The Python code is still used for the test suite and for running simulations from the command line:
 ```
-pip install numpy scipy flask matplotlib
+$ pip install -r requirements.txt
+$ python dragraceSim.py
+$ pytest
 ```
-Replace pip with conda if you are of that persuasion.
+The old Flask app (`python flaskpage.py`) still works too and serves the same page on 127.0.0.1:5000.
 Might require new-ish Python version also, 3.8 or newer.
-Please post any bugs/issues you find as comments to this repo :)
+
+## Deployment
+Every push to `main` deploys the site via the GitHub Actions workflow in
+`.github/workflows/pages.yml`. GitHub Pages must be set to deploy from
+"GitHub Actions" under Settings → Pages.
 
 
 ## Performance

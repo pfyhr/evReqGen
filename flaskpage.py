@@ -1,11 +1,13 @@
-from flask import Flask, render_template, url_for, request, jsonify, make_response
+from flask import Flask, request, send_from_directory
 import dragraceSim
 
 app = Flask(__name__)
 
+# the page itself is a static site (also served on GitHub Pages), see index.html
+
 @app.route('/', methods=['POST', 'GET'])
 def index():
-    return render_template('index.html')
+    return send_from_directory(app.root_path, 'index.html')
 
 @app.route('/runsim', methods=['POST', 'GET'])
 def sim():
@@ -38,7 +40,7 @@ def sim():
             return 'some issue occured'
 
     else:
-        return render_template('index.html')
+        return send_from_directory(app.root_path, 'index.html')
 
 if __name__ == "__main__":
     app.run(debug=True)
